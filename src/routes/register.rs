@@ -1,10 +1,9 @@
 use axum::{http::StatusCode, response::IntoResponse, Json};
-use serde::{Deserialize, Serialize};
-use crate::models::{User, Role};
+use serde::{Deserialize};
+use crate::models::user::{Role, User};
 use argon2::{Argon2, PasswordHasher};
-use password_hash::{PasswordHash, SaltString};
+use password_hash::{SaltString};
 use rand::rngs::OsRng;
-use utoipa_swagger_ui::oauth::Config;
 use uuid::Uuid;
 
 #[derive(Deserialize)]
@@ -31,7 +30,7 @@ pub async fn register(Json(payload): Json<RegisterRequest>) -> impl IntoResponse
         password: password_hash,
         role: Role::User,
     };
-
+    println!("User registered: {:?}", user);
     // In a real app, save to DB here.
 
     (StatusCode::CREATED, "User registered").into_response()
