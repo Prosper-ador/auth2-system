@@ -27,6 +27,7 @@ pub struct AuthApi;
     )
 )]
 pub async fn login(Json(payload): Json<LoginRequest>) -> impl IntoResponse {
+    dotenvy::dotenv().ok();
     // In production, verify against a database
     if payload.username == "admin" && payload.password == "password" {
         let claims = Claims {
@@ -38,7 +39,7 @@ pub async fn login(Json(payload): Json<LoginRequest>) -> impl IntoResponse {
         let token = encode(
             &Header::default(),
             &claims,
-            &EncodingKey::from_secret("your-secret-key".as_ref()),
+            &EncodingKey::from_secret(std::env::var("JWT_SECRET").expect("JWT_SECRET must be set").as_bytes()),
         )
         .unwrap();
 
