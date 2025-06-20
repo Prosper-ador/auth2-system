@@ -10,7 +10,7 @@ pub mod models;
 pub mod routes;
 pub mod middleware;
 
-use crate::{routes::{auth, protected}, middleware::auth::auth_middleware};
+use crate::{routes::{auth, protected, register, user_route}, middleware::auth::auth_middleware};
 
 #[tokio::main]
 async fn main() {
@@ -30,11 +30,20 @@ async fn main() {
     )]
     struct ApiDoc;
 
+    use crate::middleware::auth::auth_middleware;
+
+    // let protected_routes = Router::new()
+    //     .route("/admin", get(protected::admin_route))
+    //     .route("/user", get(user_route::user_only))
+    //     .layer(axum::middleware::from_fn(auth_middleware));
+
     let app = Router::new()
         .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()))
         .route("/login", post(auth::login))
+        .route("/register", post(register::register))
         .route("/admin", get(protected::admin_route))
-        // .layer(axum::middleware::from_fn(auth_middleware))
+        .route("/user", get(user_route::user_only))
+        .layer(axum::middleware::from_fn(auth_middleware))
         .layer(CorsLayer::permissive());
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
