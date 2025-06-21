@@ -17,7 +17,7 @@ pub enum Role {
 
 #[derive(Serialize, Deserialize, ToSchema)]
 pub struct LoginRequest {
-    pub username: String,
+    pub email: String,
     pub password: String,
 }
 

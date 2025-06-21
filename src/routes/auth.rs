@@ -29,7 +29,7 @@ pub async fn login(
     let users = state.users.lock().unwrap();
 
     //Check if the user exist and the password matches
-    let user = users.iter().find(|u| u.username == payload.username);
+    let user = users.iter().find(|u| u.username == payload.email);
 
     if user.is_none()
         || bcrypt::verify(payload.password.as_bytes(), &user.unwrap().password).ok() != Some(true)
@@ -42,7 +42,7 @@ pub async fn login(
     }
 
     let claims = Claims {
-        sub: payload.username.clone(),
+        sub: payload.email.clone(),
         role: user.unwrap().role.clone(),
         exp: (chrono::Utc::now() + chrono::Duration::hours(24)).timestamp() as usize,
     };
@@ -72,7 +72,7 @@ pub async fn register(
     Json(payload): Json<LoginRequest>,
 ) -> impl IntoResponse {
     // In production, verify against a database
-    if payload.username.is_empty() || payload.password.is_empty() {
+    if payload.email.is_empty() || payload.password.is_empty() {
         return (
             StatusCode::BAD_REQUEST,
             Json(json!({"error": "Username and password are required"})),
@@ -93,7 +93,7 @@ pub async fn register(
 
     let new_user = crate::models::User {
         id: users.len() as i32 + 1,
-        username: payload.username,
+        username: payload.email,
         password: hashed_password.to_string(),
         role: Role::User,
     };
