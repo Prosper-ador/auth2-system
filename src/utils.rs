@@ -3,7 +3,7 @@ use dotenvy::dotenv;
 pub struct Config {
     pub jwt_salt: String,
     pub jwt_secret: String,
-    pub jwt_expiration: String,
+    pub jwt_expiration: u32,
 }
 
 pub fn load_env() -> Config {
@@ -23,7 +23,9 @@ pub fn load_env() -> Config {
         .unwrap_or_else(|_| {
             println!("JWT_EXPIRATION must be set in .env file");
             std::process::exit(1);
-        });
+        })
+        .parse::<u32>()
+        .unwrap();
 
     return Config {
         jwt_salt: JWT_SALT,
