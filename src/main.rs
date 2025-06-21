@@ -20,6 +20,7 @@ use crate::{
 
 #[derive(Debug, Clone)]
 pub struct AppState {
+    pub config: utils::Config,
     pub users: Arc<Mutex<Vec<models::User>>>,
 }
 
