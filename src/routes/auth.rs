@@ -9,8 +9,6 @@ use crate::middleware::auth::Claims;
 use crate::models::{LoginRequest, LoginResponse, Role};
 use crate::AppState;
 
-const JWT_SALT: &[u8; 16] = b"your-secret-salt"; // Use a secure key in production
-
 #[derive(OpenApi)]
 #[openapi(paths(login), components(schemas(LoginRequest, LoginResponse)))]
 pub struct AuthApi;
