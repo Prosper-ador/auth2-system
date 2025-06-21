@@ -2,7 +2,7 @@ use axum::{
     body::Body,
     http::{Request, StatusCode},
     middleware::Next,
-    response::{IntoResponse, Response},
+    response::{Response},
     extract::State,
 };
 use jsonwebtoken::{decode, DecodingKey, Validation};
