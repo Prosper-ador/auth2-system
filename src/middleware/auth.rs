@@ -3,13 +3,17 @@ use axum::{
     http::{Request, StatusCode},
     middleware::Next,
     response::{IntoResponse, Response},
+    extract::State,
 };
 use jsonwebtoken::{decode, DecodingKey, Validation};
 use serde::{Deserialize, Serialize};
 use std::env;
 use std::sync::Arc;
 
-use crate::models::{Role, User};
+use crate::{
+    models::{Role, User},
+    AppState,
+};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Claims {
@@ -18,7 +22,7 @@ pub struct Claims {
     pub exp: usize,
 }
 
-pub async fn auth_middleware(req: Request<Body>, next: Next) -> Result<Response, StatusCode> {
+pub async fn auth_middleware(State(state): State<AppState>, req: Request<Body>, next: Next) -> Result<Response, StatusCode> {
     let auth_header = req
         .headers()
         .get("Authorization")

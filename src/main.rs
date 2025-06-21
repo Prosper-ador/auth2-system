@@ -21,7 +21,7 @@ use crate::{
 
 #[derive(Debug, Clone)]
 pub struct AppState {
-    pub config: utils::Config,
+    pub config: Arc<utils::Config>,
     pub users: Arc<Mutex<Vec<models::User>>>,
 }
 
@@ -41,7 +41,7 @@ async fn main() {
     struct ApiDoc;
 
     let state = AppState { 
-        config: load_env(),
+        config: Arc::new(load_env()),
         users: Arc::new(Mutex::new(vec![])) };
 
     let app = Router::new()
