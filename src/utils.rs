@@ -2,7 +2,7 @@ use dotenvy::dotenv;
 
 #[derive(Debug, Clone)]
 pub struct Config {
-    pub jwt_salt: String,
+    pub jwt_salt: [u8; 16],
     pub jwt_secret: String,
     pub jwt_expiration_secs: u32,
 }
@@ -15,6 +15,13 @@ pub fn load_env() -> Config {
             println!("JWT_SALT must be set in .env file");
             std::process::exit(1);
         });
+    let jwt_salt_bytes = [0u8; 16];
+    if jwt_salt.len() < 16 {
+        println!("JWT_SALT must be exactly 16 characters long");
+        std::process::exit(1);
+    }
+    let mut jwt_salt = [0u8; 16];
+    jwt_salt.copy_from_slice(&jwt_salt_bytes[..16]);
     let jwt_secret = std::env::var("JWT_SECRET")
         .unwrap_or_else(|_| {
             println!("JWT_SECRET must be set in .env file");

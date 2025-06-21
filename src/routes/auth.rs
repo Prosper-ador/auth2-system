@@ -82,9 +82,14 @@ pub async fn register(
             .into_response();
     }
 
+    let config = state.config.clone();
     // Here you would typically hash the password and save the user to a database
     let hashed_password =
-        hash_with_salt(payload.password.as_bytes(), bcrypt::DEFAULT_COST, *JWT_SALT).unwrap();
+        hash_with_salt(
+            payload.password.as_bytes(),
+            bcrypt::DEFAULT_COST,
+            config.jwt_salt
+        ).unwrap();
 
     let mut users = state.users.lock().unwrap();
 
