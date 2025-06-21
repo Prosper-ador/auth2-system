@@ -49,10 +49,11 @@ pub async fn login(
         exp: (chrono::Utc::now() + chrono::Duration::hours(24)).timestamp() as usize,
     };
 
+    let config = state.config.clone();
     let token = encode(
         &Header::default(),
         &claims,
-        &EncodingKey::from_secret("your-secret-key".as_ref()),
+        &EncodingKey::from_secret(config.jwt_secret.as_ref()),
     )
     .unwrap();
 

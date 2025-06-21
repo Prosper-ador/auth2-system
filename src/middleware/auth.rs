@@ -38,11 +38,12 @@ pub async fn auth_middleware(
         .ok_or(StatusCode::UNAUTHORIZED)?;
 
     // Load JWT secret from environment variable for decoding
-    let key_str = match env::var("JWT_SECRET") {
+    let _key_str = match env::var("JWT_SECRET") {
         Ok(val) => val,
         Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
     };
-    let key = DecodingKey::from_secret(key_str.as_ref());
+    let config = state.config.clone();
+    let key = DecodingKey::from_secret(config.jwt_secret.as_ref());
     let token_data = decode::<Claims>(token, &key, &Validation::default())
         .map_err(|_| StatusCode::UNAUTHORIZED)?;
 
