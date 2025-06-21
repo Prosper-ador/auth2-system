@@ -24,8 +24,9 @@ pub struct Claims {
 
 pub async fn auth_middleware(
     State(state): State<AppState>,
-    req: Request<Body>, next: Next) -> Result<Response, StatusCode> 
-    {
+    req: Request<Body>,
+    next: Next
+) -> Result<Response, StatusCode> {
     let auth_header = req
         .headers()
         .get("Authorization")
