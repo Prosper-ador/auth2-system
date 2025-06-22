@@ -3,24 +3,31 @@ use axum::{http::StatusCode, response::IntoResponse, Json};
 use bcrypt::hash_with_salt;
 use jsonwebtoken::{encode, EncodingKey, Header};
 use serde_json::json;
-use utoipa::OpenApi;
+use utoipa::{OpenApi, ToSchema};
 use uuid::Uuid;
 
 use crate::middleware::auth::Claims;
 use crate::models::user::{RegisterRequest, User};
 use crate::models::{LoginRequest, LoginResponse, Role};
 use crate::AppState;
+use serde::{Serialize};
 
 #[derive(OpenApi)]
 #[openapi(paths(login), components(schemas(LoginRequest, LoginResponse)))]
 pub struct AuthApi;
+
+#[derive(Serialize, ToSchema)]
+pub struct LoginSuccessResponse {
+    pub message: String,
+    pub token: String,
+}
 
 #[utoipa::path(
     post,
     path = "/login",
     request_body = LoginRequest,
     responses(
-        (status = 200, description = "Login successful", body = LoginResponse),
+        (status = 200, description = "Login successful", body = LoginSuccessResponse),
         (status = 401, description = "Invalid credentials")
     )
 )]
@@ -57,7 +64,12 @@ pub async fn login(
     )
     .unwrap();
 
-    return (StatusCode::OK, Json(LoginResponse { token })).into_response();
+    let response = LoginSuccessResponse {
+        message: "Login successful".to_string(),
+        token,
+    };
+
+    return (StatusCode::OK, Json(response)).into_response();
 }
 
 #[utoipa::path(
