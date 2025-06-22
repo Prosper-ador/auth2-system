@@ -1,33 +1,26 @@
 use axum::extract::State;
 use axum::{http::StatusCode, response::IntoResponse, Json};
-use bcrypt::hash_with_salt;
 use jsonwebtoken::{encode, EncodingKey, Header};
 use serde_json::json;
-use utoipa::{OpenApi, ToSchema};
+use utoipa::{OpenApi};
 use uuid::Uuid;
 
 use crate::middleware::auth::Claims;
 use crate::models::user::{RegisterRequest, User};
 use crate::models::{LoginRequest, LoginResponse, Role};
 use crate::AppState;
-use serde::{Serialize};
 
 #[derive(OpenApi)]
 #[openapi(paths(login), components(schemas(LoginRequest, LoginResponse)))]
 pub struct AuthApi;
 
-#[derive(Serialize, ToSchema)]
-pub struct LoginSuccessResponse {
-    pub message: String,
-    pub token: String,
-}
 
 #[utoipa::path(
     post,
     path = "/login",
     request_body = LoginRequest,
     responses(
-        (status = 200, description = "Login successful", body = LoginSuccessResponse),
+        (status = 200, description = "Login successful", body = LoginResponse),
         (status = 401, description = "Invalid credentials")
     )
 )]
@@ -64,7 +57,7 @@ pub async fn login(
     )
     .unwrap();
 
-    let response = LoginSuccessResponse {
+    let response = LoginResponse {
         message: "Login successful".to_string(),
         token,
     };
@@ -109,12 +102,7 @@ pub async fn register(
     let config = state.config.clone();
     
     // Here you would typically hash the password and save the user to a database
-    let hashed_password =
-        hash_with_salt(
-            payload.password.as_bytes(),
-            bcrypt::DEFAULT_COST,
-            config.jwt_salt
-        ).unwrap();
+    let hashed_password = bcrypt::hash(payload.password, bcrypt::DEFAULT_COST).unwrap();
 
     let mut users = state.users.lock().unwrap();
 
@@ -149,9 +137,14 @@ pub async fn register(
         &EncodingKey::from_secret(config.jwt_secret.as_ref()),
     ).unwrap();
 
+    let response = LoginResponse {
+        message: "User registered successfully".to_string(),
+        token: token.clone(),
+    };
+
     (
         StatusCode::CREATED,
-        Json(LoginResponse { token }),
+        Json(LoginResponse { message: response.message, token: token.clone() }),
     )
     .into_response()
 }

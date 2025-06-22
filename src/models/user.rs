@@ -25,6 +25,7 @@ pub struct LoginRequest {
 
 #[derive(Serialize, ToSchema)]
 pub struct LoginResponse {
+    pub message: String,
     pub token: String,
 }
 
