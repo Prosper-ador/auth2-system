@@ -9,6 +9,7 @@ use jsonwebtoken::{decode, DecodingKey, Validation};
 use serde::{Deserialize, Serialize};
 use std::env;
 use std::sync::Arc;
+use uuid::Uuid;
 
 use crate::{
     models::{Role, User},
@@ -48,8 +49,10 @@ pub async fn auth_middleware(
         .map_err(|_| StatusCode::UNAUTHORIZED)?;
 
     let user = User {
-        id: 1, // In production, fetch from DB
-        username: token_data.claims.sub,
+        id: Uuid::new_v4().to_string(),
+        email: token_data.claims.sub,
+        first_name: String::new(),
+        last_name: String::new(),
         password: String::new(),
         role: token_data.claims.role,
     };
@@ -58,3 +61,4 @@ pub async fn auth_middleware(
     request.extensions_mut().insert(Arc::new(user));
     Ok(next.run(request).await)
 }
+
