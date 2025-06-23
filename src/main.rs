@@ -29,7 +29,7 @@ pub struct AppState {
 async fn main() {
     #[derive(OpenApi)]
     #[openapi(
-        info(title = "Auth API", description = "A simple auth API"),
+        info(title = "Auth API", description = "A simple auth API", license(name = "MIT", url = "https://opensource.org/licenses/MIT")),
         paths(auth::login, auth::register, protected::admin_route),
         components(schemas(
             models::User,
