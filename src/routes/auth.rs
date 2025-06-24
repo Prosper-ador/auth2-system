@@ -6,7 +6,7 @@ use utoipa::{OpenApi};
 use uuid::Uuid;
 
 use crate::middleware::auth::Claims;
-use crate::models::user::{RegisterRequest, User};
+use crate::models::user::{RegisterRequest, RegisterResponse, User};
 use crate::models::{LoginRequest, LoginResponse, Role};
 use crate::AppState;
 
@@ -68,9 +68,9 @@ pub async fn login(
 #[utoipa::path(
     post,
     path = "/register",
-    request_body = LoginRequest,
+    request_body = RegisterRequest,
     responses(
-        (status = 201, description = "User registered successfully", body = LoginResponse),
+        (status = 201, description = "User registered successfully", body = RegisterResponse),
         (status = 400, description = "Bad request")
     )
 )]
