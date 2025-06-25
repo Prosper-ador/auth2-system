@@ -9,14 +9,14 @@ use serde_json::json;
 use std::sync::{Arc, Mutex};
 use utoipa::OpenApi;
 
-use crate::middleware::auth::Claims;
+use crate::{middleware::auth::Claims, models::UserResponse};
 use crate::models::{RegisterRequest, Role, User};
 
 /// Aggregates all protected routes: admin dashboard, admin-only registration, user profile view.
 #[derive(OpenApi)]
 #[openapi(
     paths(admin_dashboard, register_admin, user_profile),
-    components(schemas(User, RegisterRequest, Role))
+    components(schemas(User, RegisterRequest, Role, UserResponse)),
 )]
 pub struct ProtectedApi;
 
@@ -30,6 +30,15 @@ pub fn router(
         .route("/user/profile", get(user_profile))
         .layer(Extension(users))
 }
+
+#[utoipa::path(
+    get,
+    path = "/admin/dashboard",
+    responses(
+        (status = 200, description = "Admin dashboard with user stats", body = UserResponse),
+        (status = 403, description = "Forbidden - Admin access required")
+    )
+)]
 
 /// GET /admin/dashboard
 /// Returns system stats and list of users — only accessible by Admins.
@@ -63,6 +72,17 @@ pub async fn admin_dashboard(
     Ok((StatusCode::OK, Json(payload)))
 }
 
+#[utoipa::path(
+    post,
+    path = "/admin/register",
+    request_body = RegisterRequest,
+    responses(
+        (status = 201, description = "Admin user created", body = UserResponse),
+        (status = 403, description = "Forbidden - Admin access required"),
+        (status = 409, description = "Conflict - Email already registered"),
+        (status = 500, description = "Internal Server Error - Hash failure")
+    )
+)]
 /// POST /admin/register
 /// Allows Admin to create a new Admin user.
 pub async fn register_admin(
@@ -102,6 +122,16 @@ pub async fn register_admin(
 
     Ok((StatusCode::CREATED, Json(response)))
 }
+
+#[utoipa::path(
+    get,
+    path = "/user/profile",
+    responses(
+        (status = 200, description = "User profile info", body = UserResponse),
+        (status = 403, description = "Forbidden - User access required"),
+        (status = 404, description = "Not Found - User not found")
+    )
+)]
 
 /// GET /user/profile
 /// Returns the authenticated user’s profile info — only accessible by Users.

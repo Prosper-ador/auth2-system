@@ -5,12 +5,11 @@ use serde_json::json;
 use utoipa::{OpenApi};
 
 use crate::middleware::auth::Claims;
-use crate::models::user::{RegisterRequest, RegisterResponse, User, UserResponse};
-use crate::models::{LoginRequest, LoginResponse, Role};
+use crate::models::user::*;
 use crate::AppState;
 
 #[derive(OpenApi)]
-#[openapi(paths(login, register), components(schemas(LoginRequest, LoginResponse, RegisterRequest)))]
+#[openapi(paths(login, register), components(schemas(LoginRequest, LoginResponse, RegisterRequest, RegisterResponse)))]
 pub struct AuthApi;
 
 
@@ -96,7 +95,7 @@ pub async fn register(
         {
         return (
             StatusCode::BAD_REQUEST,
-            Json(json!({"error": "Username and password are required"})),
+            Json(json!({"error": "First name, last name, email, password, and confirm password are required"})),
         )
             .into_response();
     }

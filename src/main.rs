@@ -1,7 +1,7 @@
 use std::sync::{Arc, Mutex};
 
 use axum::{
-    routing::{get, post},
+    routing::{post},
     Router,
 };
 use tower_http::cors::CorsLayer;
@@ -16,37 +16,62 @@ pub mod utils;
 use crate::{
     middleware::auth::auth_middleware,
     routes::{auth, protected},
-    utils::{load_env},
+    utils::load_env,
+    models::*,
 };
 
 #[derive(Debug, Clone)]
 pub struct AppState {
     pub config: Arc<utils::Config>,
-    pub users: Arc<Mutex<Vec<models::User>>>,
+    pub users: Arc<Mutex<Vec<User>>>,
 }
 
 #[tokio::main]
 async fn main() {
     #[derive(OpenApi)]
     #[openapi(
-        info(title = "Auth API", description = "A simple auth API", license(name = "MIT", url = "https://opensource.org/licenses/MIT")),
-        paths(auth::login, auth::register, protected::admin_route),
-        components(schemas(
-            models::User,
-            models::Role,
-            models::LoginRequest,
-            models::LoginResponse,
-            models::RegisterRequest
-        ))
+        info(
+            title = "Auth API",
+            description = "A simple auth API",
+            license(name = "MIT", url = "https://opensource.org/licenses/MIT")
+        ),
+        paths(
+            auth::login,
+            auth::register,
+            protected::admin_dashboard,
+            protected::register_admin,
+            protected::user_profile
+        ),
+        components(
+            schemas(
+                User,
+                UserResponse,
+                Role,
+                LoginRequest,
+                LoginResponse,
+                RegisterRequest,
+                RegisterResponse
+            )
+        )
     )]
     struct ApiDoc;
 
-    let state = AppState { 
+    let state = AppState {
         config: Arc::new(load_env()),
-        users: Arc::new(Mutex::new(vec![])) };
+        users: Arc::new(Mutex::new(vec![User {
+            id: 1,
+            email: "user@example.com".to_string(),
+            first_name: "John".to_string(),
+            last_name: "Doe".to_string(),
+            password: bcrypt::hash("password", bcrypt::DEFAULT_COST).unwrap(),
+            role: Role::User,
+        }])),
+    };
+
+    let protected_router = protected::router(state.users.clone());
 
     let app = Router::new()
-        .route("/admin", get(protected::admin_route))
+        .nest("/protected", protected_router)
         .layer(axum::middleware::from_fn_with_state(state.clone(), auth_middleware))
         .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()))
         .route("/login", post(auth::login))
