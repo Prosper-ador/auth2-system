@@ -3,15 +3,15 @@ use axum::{http::StatusCode, response::IntoResponse, Json};
 use jsonwebtoken::{encode, EncodingKey, Header};
 use serde_json::json;
 use utoipa::{OpenApi};
-use uuid::Uuid;
+use bcrypt::hash_with_salt;
 
 use crate::middleware::auth::Claims;
-use crate::models::user::{RegisterRequest, RegisterResponse, User};
+use crate::models::user::{RegisterRequest, RegisterResponse, User, UserResponse};
 use crate::models::{LoginRequest, LoginResponse, Role};
 use crate::AppState;
 
 #[derive(OpenApi)]
-#[openapi(paths(login), components(schemas(LoginRequest, LoginResponse)))]
+#[openapi(paths(login, register), components(schemas(LoginRequest, LoginResponse, RegisterRequest)))]
 pub struct AuthApi;
 
 
@@ -46,9 +46,6 @@ pub async fn login(
     let user = user.unwrap();
     let claims = Claims {
         sub: payload.email.clone(),
-        email: user.email.clone(),
-        first_name: user.first_name.clone(),
-        last_name: user.last_name.clone(),
         role: user.role.clone(),
         exp: (chrono::Utc::now() + chrono::Duration::hours(24)).timestamp() as usize,
     };
@@ -62,8 +59,17 @@ pub async fn login(
     .unwrap();
 
     let response = LoginResponse {
+        access_token: token,
+        token_type: "Bearer".to_string(),
         message: "Login successful".to_string(),
-        token,
+        user: UserResponse {
+            id: user.id,
+            email: user.email.clone(),
+            first_name: user.first_name.clone(),
+            last_name: user.last_name.clone(),
+            role: user.role.clone(),
+        },
+        
     };
 
     return (StatusCode::OK, Json(response)).into_response();
@@ -106,7 +112,7 @@ pub async fn register(
     let config = state.config.clone();
     
     // Here you would typically hash the password and save the user to a database
-    let hashed_password = bcrypt::hash(payload.password, bcrypt::DEFAULT_COST).unwrap();
+    let hashed_password = bcrypt::hash_with_salt(payload.password, bcrypt::DEFAULT_COST, config.jwt_salt).unwrap();
 
     let mut users = state.users.lock().unwrap();
 
@@ -122,7 +128,7 @@ pub async fn register(
     let last_name = payload.last_name.clone();
 
     let new_user = User {
-        id: Uuid::new_v4().to_string(),
+        id: users.len() as i32 + 1,
         email: payload.email.clone(),
         first_name: first_name.clone(),
         last_name: last_name.clone(),
@@ -130,14 +136,11 @@ pub async fn register(
         role: Role::User,
     };
 
-    users.push(new_user);
+    users.push(new_user.clone());
 
     // Generate JWT token for the new user
     let claims = Claims {
         sub: payload.email.clone(),
-        email: payload.email.clone(),
-        first_name,
-        last_name,
         role: Role::User,
         exp: (chrono::Utc::now() + chrono::Duration::hours(24)).timestamp() as usize,
     };
@@ -148,13 +151,21 @@ pub async fn register(
     ).unwrap();
 
     let response = LoginResponse {
+        access_token: token.clone(),
         message: "User registered successfully".to_string(),
-        token: token.clone(),
+        token_type: "Bearer".to_string(),
+        user: UserResponse {
+            id: new_user.id,
+            email: new_user.email.clone(),
+            first_name: new_user.first_name.clone(),
+            last_name: new_user.last_name.clone(),
+            role: new_user.role.clone(),
+        },
     };
 
     (
         StatusCode::CREATED,
-        Json(LoginResponse { message: response.message, token: token.clone() }),
+        Json(response),
     )
     .into_response()
 }
