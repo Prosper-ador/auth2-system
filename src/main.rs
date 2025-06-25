@@ -35,7 +35,8 @@ async fn main() {
             models::User,
             models::Role,
             models::LoginRequest,
-            models::LoginResponse
+            models::LoginResponse,
+            models::RegisterRequest
         ))
     )]
     struct ApiDoc;
