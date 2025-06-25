@@ -1,12 +1,13 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { AuthApi, Configuration, User, LoginRequest } from '../../../ts-client/api';
+import { AuthApi, Configuration, User, LoginRequest, RegisterRequest } from '../../../ts-client/api';
 import { getToken, clearAuthData, isTokenExpired, decodeUserFromToken, TOKEN_KEY } from './authUtils';
+import { useNavigate } from "react-router-dom";
 
 interface AuthContextType {
   user: User | null;
   login: (credentials: LoginRequest) => Promise<void>;
-  register: (userData: LoginRequest) => Promise<void>;
+  register: (userData: RegisterRequest) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -19,6 +20,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = getToken();
@@ -37,7 +39,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       title: "Logged Out",
       description: "You have been successfully logged out."
     });
-  }, [toast]);
+    navigate("/login");
+  }, [toast, navigate]);
 
   useEffect(() => {
     if (!user) return;
@@ -67,6 +70,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         title: "Welcome back!",
         description: "You have been successfully logged in."
       });
+      console.log("Navigating to /profile");
+      navigate("/profile");
     } catch (error) {
       toast({
         title: "Login Failed",
@@ -80,7 +85,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const register = async (userData: LoginRequest) => {
+  const register = async (userData: RegisterRequest) => {
     setIsLoading(true);
     try {
       const response = await api.register(userData);
@@ -90,6 +95,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         title: "Account Created",
         description: "Your account has been created successfully!"
       });
+      navigate("/profile");
     } catch (error) {
       toast({
         title: "Registration Failed",
@@ -109,6 +115,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {

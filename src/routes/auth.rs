@@ -43,9 +43,13 @@ pub async fn login(
             .into_response();
     }
 
+    let user = user.unwrap();
     let claims = Claims {
         sub: payload.email.clone(),
-        role: user.unwrap().role.clone(),
+        email: user.email.clone(),
+        first_name: user.first_name.clone(),
+        last_name: user.last_name.clone(),
+        role: user.role.clone(),
         exp: (chrono::Utc::now() + chrono::Duration::hours(24)).timestamp() as usize,
     };
 
@@ -114,11 +118,14 @@ pub async fn register(
         .into_response();
     }
 
+    let first_name = payload.first_name.clone();
+    let last_name = payload.last_name.clone();
+
     let new_user = User {
         id: Uuid::new_v4().to_string(),
         email: payload.email.clone(),
-        first_name: payload.first_name,
-        last_name: payload.last_name,
+        first_name: first_name.clone(),
+        last_name: last_name.clone(),
         password: hashed_password.to_string(),
         role: Role::User,
     };
@@ -128,6 +135,9 @@ pub async fn register(
     // Generate JWT token for the new user
     let claims = Claims {
         sub: payload.email.clone(),
+        email: payload.email.clone(),
+        first_name,
+        last_name,
         role: Role::User,
         exp: (chrono::Utc::now() + chrono::Duration::hours(24)).timestamp() as usize,
     };

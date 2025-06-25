@@ -60,7 +60,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **register**
-> LoginResponse register(loginRequest)
+> RegisterResponse register(registerRequest)
 
 
 ### Example
@@ -69,16 +69,16 @@ No authorization required
 import {
     AuthApi,
     Configuration,
-    LoginRequest
+    RegisterRequest
 } from './api';
 
 const configuration = new Configuration();
 const apiInstance = new AuthApi(configuration);
 
-let loginRequest: LoginRequest; //
+let registerRequest: RegisterRequest; //
 
 const { status, data } = await apiInstance.register(
-    loginRequest
+    registerRequest
 );
 ```
 
@@ -86,12 +86,12 @@ const { status, data } = await apiInstance.register(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **loginRequest** | **LoginRequest**|  | |
+| **registerRequest** | **RegisterRequest**|  | |
 
 
 ### Return type
 
-**LoginResponse**
+**RegisterResponse**
 
 ### Authorization
 

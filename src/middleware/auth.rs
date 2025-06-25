@@ -16,9 +16,12 @@ use crate::{
     AppState,
 };
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Serialize, Deserialize)]
 pub struct Claims {
     pub sub: String,
+    pub email: String,
+    pub first_name: String,
+    pub last_name: String,
     pub role: Role,
     pub exp: usize,
 }

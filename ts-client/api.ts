@@ -64,6 +64,75 @@ export interface LoginResponse {
 /**
  * 
  * @export
+ * @interface RegisterRequest
+ */
+export interface RegisterRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof RegisterRequest
+     */
+    'confirm_password': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RegisterRequest
+     */
+    'email': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RegisterRequest
+     */
+    'first_name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RegisterRequest
+     */
+    'last_name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RegisterRequest
+     */
+    'password': string;
+}
+/**
+ * 
+ * @export
+ * @interface RegisterResponse
+ */
+export interface RegisterResponse {
+    [x: string]: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RegisterResponse
+     */
+    'email': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RegisterResponse
+     */
+    'first_name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RegisterResponse
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RegisterResponse
+     */
+    'last_name': string;
+}
+/**
+ * 
+ * @export
  * @enum {string}
  */
 
@@ -164,13 +233,13 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
         },
         /**
          * 
-         * @param {LoginRequest} loginRequest 
+         * @param {RegisterRequest} registerRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        register: async (loginRequest: LoginRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'loginRequest' is not null or undefined
-            assertParamExists('register', 'loginRequest', loginRequest)
+        register: async (registerRequest: RegisterRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'registerRequest' is not null or undefined
+            assertParamExists('register', 'registerRequest', registerRequest)
             const localVarPath = `/register`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -190,7 +259,7 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(loginRequest, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(registerRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -221,12 +290,12 @@ export const AuthApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {LoginRequest} loginRequest 
+         * @param {RegisterRequest} registerRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async register(loginRequest: LoginRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<LoginResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.register(loginRequest, options);
+        async register(registerRequest: RegisterRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RegisterResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.register(registerRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['AuthApi.register']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -252,12 +321,12 @@ export const AuthApiFactory = function (configuration?: Configuration, basePath?
         },
         /**
          * 
-         * @param {LoginRequest} loginRequest 
+         * @param {RegisterRequest} registerRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        register(loginRequest: LoginRequest, options?: RawAxiosRequestConfig): AxiosPromise<LoginResponse> {
-            return localVarFp.register(loginRequest, options).then((request) => request(axios, basePath));
+        register(registerRequest: RegisterRequest, options?: RawAxiosRequestConfig): AxiosPromise<RegisterResponse> {
+            return localVarFp.register(registerRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -282,13 +351,13 @@ export class AuthApi extends BaseAPI {
 
     /**
      * 
-     * @param {LoginRequest} loginRequest 
+     * @param {RegisterRequest} registerRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthApi
      */
-    public register(loginRequest: LoginRequest, options?: RawAxiosRequestConfig) {
-        return AuthApiFp(this.configuration).register(loginRequest, options).then((request) => request(this.axios, this.basePath));
+    public register(registerRequest: RegisterRequest, options?: RawAxiosRequestConfig) {
+        return AuthApiFp(this.configuration).register(registerRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -390,4 +459,3 @@ export class ProtectedApi extends BaseAPI {
 }
 
 export { Configuration } from './configuration';
-
