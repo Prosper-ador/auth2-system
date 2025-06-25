@@ -11,6 +11,7 @@ use utoipa::OpenApi;
 
 use crate::{middleware::auth::Claims, models::UserResponse};
 use crate::models::{RegisterRequest, Role, User};
+use crate::AppState;
 
 /// Aggregates all protected routes: admin dashboard, admin-only registration, user profile view.
 #[derive(OpenApi)]
@@ -21,14 +22,12 @@ use crate::models::{RegisterRequest, Role, User};
 pub struct ProtectedApi;
 
 /// Registers the protected routes into an Axum Router with required shared state.
-pub fn router(
-    users: Arc<Mutex<Vec<User>>>,
-) -> Router {
+pub fn router(state: AppState) -> Router {
     Router::new()
         .route("/admin/dashboard", get(admin_dashboard))
         .route("/admin/register", post(register_admin))
         .route("/user/profile", get(user_profile))
-        .layer(Extension(users))
+        .with_state(state)
 }
 
 #[utoipa::path(
