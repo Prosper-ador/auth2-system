@@ -3,7 +3,6 @@ use axum::{http::StatusCode, response::IntoResponse, Json};
 use jsonwebtoken::{encode, EncodingKey, Header};
 use serde_json::json;
 use utoipa::{OpenApi};
-use bcrypt::hash_with_salt;
 
 use crate::middleware::auth::Claims;
 use crate::models::user::{RegisterRequest, RegisterResponse, User, UserResponse};
@@ -45,7 +44,7 @@ pub async fn login(
 
     let user = user.unwrap();
     let claims = Claims {
-        sub: payload.email.clone(),
+        sub: user.id.to_string(),
         role: user.role.clone(),
         exp: (chrono::Utc::now() + chrono::Duration::hours(24)).timestamp() as usize,
     };
@@ -140,7 +139,7 @@ pub async fn register(
 
     // Generate JWT token for the new user
     let claims = Claims {
-        sub: payload.email.clone(),
+        sub: new_user.id.to_string(),
         role: Role::User,
         exp: (chrono::Utc::now() + chrono::Duration::hours(24)).timestamp() as usize,
     };
