@@ -1,67 +1,47 @@
 use axum::{
     body::Body,
+    extract::State,
     http::{Request, StatusCode},
     middleware::Next,
-    response::{Response},
-    extract::State,
+    response::Response,
 };
 use jsonwebtoken::{decode, DecodingKey, Validation};
 use serde::{Deserialize, Serialize};
-use std::env;
 use std::sync::Arc;
-use uuid::Uuid;
 
 use crate::{
-    models::{Role, User},
-    AppState,
+    models::Role,
+    AppState
 };
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Claims {
-    pub sub: String,
-    pub email: String,
-    pub first_name: String,
-    pub last_name: String,
-    pub role: Role,
-    pub exp: usize,
+    pub sub: String, // Subject, typically the user ID, can also be an email
+    pub role: Role, // for role-based access control(admin, user, etc.)
+    pub exp: usize, // token expiration time as a UNIX timestamp
 }
 
 pub async fn auth_middleware(
     State(state): State<AppState>,
-    req: Request<Body>,
-    next: Next
+    mut req: Request<Body>,
+    next: Next,
 ) -> Result<Response, StatusCode> {
     let auth_header = req
         .headers()
         .get("Authorization")
-        .and_then(|header| header.to_str().ok())
+        .and_then(|h| h.to_str().ok())
         .ok_or(StatusCode::UNAUTHORIZED)?;
 
     let token = auth_header
         .strip_prefix("Bearer ")
         .ok_or(StatusCode::UNAUTHORIZED)?;
 
-    // Load JWT secret from environment variable for decoding
-    let _key_str = match env::var("JWT_SECRET") {
-        Ok(val) => val,
-        Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
-    };
-    let config = state.config.clone();
-    let key = DecodingKey::from_secret(config.jwt_secret.as_ref());
+    let key = DecodingKey::from_secret(state.config.jwt_secret.as_bytes());
+
     let token_data = decode::<Claims>(token, &key, &Validation::default())
         .map_err(|_| StatusCode::UNAUTHORIZED)?;
 
-    let user = User {
-        id: Uuid::new_v4().to_string(),
-        email: token_data.claims.sub,
-        first_name: String::new(),
-        last_name: String::new(),
-        password: String::new(),
-        role: token_data.claims.role,
-    };
+    req.extensions_mut().insert(Arc::new(token_data.claims));
 
-    let mut request = req;
-    request.extensions_mut().insert(Arc::new(user));
-    Ok(next.run(request).await)
+    Ok(next.run(req).await)
 }
-
