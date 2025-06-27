@@ -1,6 +1,9 @@
 use std::sync::{Arc, Mutex};
 
-use axum::{routing::post, Router};
+use axum::{
+    routing::{post},
+    Router,
+};
 use tower_http::cors::CorsLayer;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
@@ -12,9 +15,9 @@ pub mod utils;
 
 use crate::{
     middleware::auth::auth_middleware,
-    models::*,
     routes::{auth, protected},
     utils::load_env,
+    models::*,
 };
 
 #[derive(Debug, Clone)]
@@ -39,48 +42,47 @@ async fn main() {
             protected::register_admin,
             protected::user_profile
         ),
-        components(schemas(
-            User,
-            UserResponse,
-            Role,
-            LoginRequest,
-            LoginResponse,
-            RegisterRequest,
-            RegisterResponse
-        ))
+        components(
+            schemas(
+                User,
+                UserResponse,
+                Role,
+                LoginRequest,
+                LoginResponse,
+                RegisterRequest,
+                RegisterResponse
+            )
+        )
     )]
     struct ApiDoc;
 
-    let state = AppState {
-        config: Arc::new(load_env()),
-        users: Arc::new(Mutex::new(vec![User {
-            id: 1,
-            email: "user@example.com".to_string(),
-            first_name: "John".to_string(),
-            last_name: "Doe".to_string(),
-            password: bcrypt::hash("password", bcrypt::DEFAULT_COST).unwrap(),
-            role: Role::User,
-        }])),
-    };
+let state = AppState {
+    config: Arc::new(load_env()),
+    users: Arc::new(Mutex::new(vec![User {
+        id: 1,
+        email: "user@example.com".to_string(),
+        first_name: "John".to_string(),
+        last_name: "Doe".to_string(),
+        password: bcrypt::hash("password", bcrypt::DEFAULT_COST).unwrap(),
+        role: Role::User,
+    }])),
+};
 
-    let auth_router = Router::new()
-        .route("/login", post(auth::login))
-        .route("/register", post(auth::register))
-        .with_state(state.clone());
+let auth_router = Router::new()
+    .route("/login", post(auth::login))
+    .route("/register", post(auth::register))
+    .with_state(state.clone());
 
-    let protected_router = protected::router(state.clone());
+let protected_router = protected::router(state.clone());
 
-    let app = Router::new()
-        .nest("/auth", auth_router) // e.g., /auth/login
-        .nest("/protected", protected_router)
-        .layer(axum::middleware::from_fn_with_state(
-            state.clone(),
-            auth_middleware,
-        ))
-        .layer(axum::Extension(state.users.clone()))
-        .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()))
-        .layer(CorsLayer::permissive());
+let app = Router::new()
+    .nest("/auth", auth_router)  // e.g., /auth/login
+    .nest("/protected", protected_router)
+    .layer(axum::middleware::from_fn_with_state(state.clone(), auth_middleware))
+    .layer(axum::Extension(state.users.clone()))
+    .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()))
+    .layer(CorsLayer::permissive());
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
-    axum::serve(listener, app).await.unwrap();
+let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+axum::serve(listener, app).await.unwrap();
 }

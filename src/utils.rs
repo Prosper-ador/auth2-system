@@ -10,34 +10,22 @@ pub struct Config {
 pub fn load_env() -> Config {
     dotenv().ok();
 
-    let jwt_salt = std::env::var("JWT_SALT")
-        .unwrap_or_else(|_| {
-            println!("JWT_SALT must be set in .env file");
-            std::process::exit(1);
-        });
-    let jwt_salt_bytes = [0u8; 16];
-    if jwt_salt.len() < 16 {
-        println!("JWT_SALT must be exactly 16 characters long");
-        std::process::exit(1);
-    }
+    let jwt_salt_str = std::env::var("JWT_SALT")
+        .expect("JWT_SALT must be set in .env file and be exactly 16 characters");
+    assert_eq!(jwt_salt_str.len(), 16, "JWT_SALT must be exactly 16 characters long");
     let mut jwt_salt = [0u8; 16];
-    jwt_salt.copy_from_slice(&jwt_salt_bytes[..16]);
-    let jwt_secret = std::env::var("JWT_SECRET")
-        .unwrap_or_else(|_| {
-            println!("JWT_SECRET must be set in .env file");
-            std::process::exit(1);
-        });
-    let jwt_expiration_secs = std::env::var("JWT_EXPIRATION")
-        .unwrap_or_else(|_| {
-            println!("JWT_EXPIRATION must be set in .env file");
-            std::process::exit(1);
-        })
-        .parse::<u32>()
-        .unwrap();
+    jwt_salt.copy_from_slice(jwt_salt_str.as_bytes());
 
-    return Config {
+    let jwt_secret = std::env::var("JWT_SECRET")
+        .expect("JWT_SECRET must be set in .env file");
+    let jwt_expiration_secs = std::env::var("JWT_EXPIRATION")
+        .expect("JWT_EXPIRATION must be set in .env file")
+        .parse::<u32>()
+        .expect("JWT_EXPIRATION must be a valid u32");
+
+    Config {
         jwt_salt,
         jwt_secret,
         jwt_expiration_secs,
-    };
+    }
 }

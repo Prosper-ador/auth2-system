@@ -9,7 +9,7 @@ use crate::models::user::*;
 use crate::AppState;
 
 #[derive(OpenApi)]
-#[openapi(paths(login, register), components(schemas(LoginRequest, LoginResponse, RegisterRequest, RegisterResponse)))]
+#[openapi(paths(login, register), components(schemas(LoginRequest, LoginResponse, RegisterRequest)))]
 pub struct AuthApi;
 
 
@@ -78,7 +78,7 @@ pub async fn login(
     path = "/register",
     request_body = RegisterRequest,
     responses(
-        (status = 201, description = "User registered successfully", body = RegisterResponse),
+        (status = 201, description = "User registered successfully", body = LoginResponse),
         (status = 400, description = "Bad request")
     )
 )]
