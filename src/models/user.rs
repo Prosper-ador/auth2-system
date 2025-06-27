@@ -54,5 +54,4 @@ pub struct LoginResponse {
     pub access_token: String,
     pub message: String,
     pub token_type: String,
-    pub user: UserResponse
 }

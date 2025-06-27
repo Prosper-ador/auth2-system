@@ -29,3 +29,8 @@ pub fn load_env() -> Config {
         jwt_expiration_secs,
     }
 }
+
+pub fn is_valid_email(email: &str) -> bool {
+    // Simple regex, use a crate like "validator" for production
+    email.contains('@') && email.contains('.')
+}

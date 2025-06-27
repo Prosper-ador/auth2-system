@@ -7,6 +7,7 @@ use utoipa::{OpenApi};
 use crate::middleware::auth::Claims;
 use crate::models::user::*;
 use crate::AppState;
+use crate::utils::is_valid_email;
 
 #[derive(OpenApi)]
 #[openapi(paths(login, register), components(schemas(LoginRequest, LoginResponse, RegisterRequest)))]
@@ -59,15 +60,7 @@ pub async fn login(
     let response = LoginResponse {
         access_token: token,
         token_type: "Bearer".to_string(),
-        message: "Login successful".to_string(),
-        user: UserResponse {
-            id: user.id,
-            email: user.email.clone(),
-            first_name: user.first_name.clone(),
-            last_name: user.last_name.clone(),
-            role: user.role.clone(),
-        },
-        
+        message: "Login successful".to_string(),       
     };
 
     return (StatusCode::OK, Json(response)).into_response();
@@ -107,6 +100,13 @@ pub async fn register(
         .into_response();
     }
 
+    if !is_valid_email(&payload.email) {
+        return (
+            StatusCode::BAD_REQUEST,
+            Json(json!({"error": "Invalid email format"})),
+        ).into_response();
+    }
+
     let config = state.config.clone();
     
     // Here you would typically hash the password and save the user to a database
@@ -140,7 +140,7 @@ pub async fn register(
     let claims = Claims {
         sub: new_user.id.to_string(),
         role: Role::User,
-        exp: (chrono::Utc::now() + chrono::Duration::hours(24)).timestamp() as usize,
+        exp: (chrono::Utc::now() + chrono::Duration::seconds(config.jwt_expiration_secs as i64)).timestamp() as usize,
     };
     let token = encode(
         &Header::default(),
@@ -151,14 +151,7 @@ pub async fn register(
     let response = LoginResponse {
         access_token: token.clone(),
         message: "User registered successfully".to_string(),
-        token_type: "Bearer".to_string(),
-        user: UserResponse {
-            id: new_user.id,
-            email: new_user.email.clone(),
-            first_name: new_user.first_name.clone(),
-            last_name: new_user.last_name.clone(),
-            role: new_user.role.clone(),
-        },
+        token_type: "Bearer".to_string()
     };
 
     (
