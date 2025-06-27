@@ -19,4 +19,5 @@ utoipa-swagger-ui = { version = "9.0.2", features = ["axum"] }
 uuid = { version = "1.17.0", features = ["v4"] }
 rand = "0.8"
 password-hash = "0.5"
+tracing = "0.1.41"
 

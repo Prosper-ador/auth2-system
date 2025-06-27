@@ -73,15 +73,16 @@ let auth_router = Router::new()
     .route("/register", post(auth::register))
     .with_state(state.clone());
 
-let protected_router = protected::router(state.clone());
-
-let app = Router::new()
-    .nest("/auth", auth_router)  // e.g., /auth/login
-    .nest("/protected", protected_router)
+let app = Router::new()  // e.g., /auth/login
+    .nest("/auth", auth_router)
+    .route("/admin/dashboard", get(admin_dashboard))
+    .route("/admin/register", post(register_admin))
+    .route("/user/profile", get(user_profile))
     .layer(axum::middleware::from_fn_with_state(state.clone(), auth_middleware))
     .layer(axum::Extension(state.users.clone()))
     .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()))
-    .layer(CorsLayer::permissive());
+    .layer(CorsLayer::permissive())
+    .with_state(state);
 
 let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
 axum::serve(listener, app).await.unwrap();

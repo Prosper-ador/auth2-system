@@ -8,6 +8,7 @@ use axum::{
 use jsonwebtoken::{decode, DecodingKey, Validation};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
+use tracing::warn;
 
 use crate::{
     models::Role,
@@ -39,7 +40,10 @@ pub async fn auth_middleware(
     let key = DecodingKey::from_secret(state.config.jwt_secret.as_bytes());
 
     let token_data = decode::<Claims>(token, &key, &Validation::default())
-        .map_err(|_| StatusCode::UNAUTHORIZED)?;
+        .map_err(|e| {
+            warn!("JWT decode error: {:?}", e);
+            StatusCode::UNAUTHORIZED
+        })?;
 
     req.extensions_mut().insert(Arc::new(token_data.claims));
 

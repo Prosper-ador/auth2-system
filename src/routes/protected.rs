@@ -2,8 +2,7 @@ use axum::{
     extract::Extension,
     http::StatusCode,
     response::IntoResponse,
-    routing::{get, post},
-    Json, Router,
+    Json,
 };
 use serde_json::json;
 use std::sync::{Arc, Mutex};
@@ -11,8 +10,6 @@ use utoipa::OpenApi;
 
 use crate::{middleware::auth::Claims, models::UserResponse};
 use crate::models::{RegisterRequest, Role, User};
-use crate::AppState;
-
 /// Aggregates all protected routes: admin dashboard, admin-only registration, user profile view.
 #[derive(OpenApi)]
 #[openapi(
@@ -20,15 +17,6 @@ use crate::AppState;
     components(schemas(User, RegisterRequest, Role, UserResponse)),
 )]
 pub struct ProtectedApi;
-
-/// Registers the protected routes into an Axum Router with required shared state.
-pub fn router(state: AppState) -> Router {
-    Router::new()
-        .route("/admin/dashboard", get(admin_dashboard))
-        .route("/admin/register", post(register_admin))
-        .route("/user/profile", get(user_profile))
-        .with_state(state)
-}
 
 #[utoipa::path(
     get,
@@ -133,7 +121,7 @@ pub async fn register_admin(
 )]
 
 /// GET /user/profile
-/// Returns the authenticated user’s profile info — only accessible by Users.
+/// Returns the authenticated user's profile info — only accessible by Users.
 pub async fn user_profile(
     Extension(claims): Extension<Arc<Claims>>,
     Extension(users): Extension<Arc<Mutex<Vec<User>>>>,
@@ -145,13 +133,13 @@ pub async fn user_profile(
     let users_guard = users.lock().unwrap();
     match users_guard.iter().find(|u| u.email == claims.sub) {
         Some(u) => {
-            let profile = json!({
-                "id": u.id,
-                "email": u.email,
-                "first_name": u.first_name,
-                "last_name": u.last_name,
-                "role": format!("{:?}", u.role),
-            });
+            let profile = UserResponse {
+                id: u.id,
+                email: u.email.clone(),
+                first_name: u.first_name.clone(),
+                last_name: u.last_name.clone(),
+                role: u.role.clone(),
+            };
             Ok((StatusCode::OK, Json(profile)))
         }
         None => Err((StatusCode::NOT_FOUND, Json(json!({ "error": "User not found" })))),
