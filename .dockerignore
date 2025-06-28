@@ -1,0 +1,12 @@
+.git/
+.gitignore
+README.md
+DEPLOYMENT.md
+dev.sh
+generate-client.sh
+deploy-production.sh
+*.log
+frontend/
+ts-client/
+backend/target/
+backend/Cargo.lock 

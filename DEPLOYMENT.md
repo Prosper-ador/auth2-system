@@ -38,7 +38,7 @@ This guide will help you deploy your fullstack authentication system to producti
 3. **Select your repository**
 
 4. **Configure the deployment:**
-   - **Root Directory:** Leave as root (the configuration files will handle the backend build)
+   - **Root Directory:** Leave as root (Docker will handle the build)
    - **Environment Variables:**
      ```
      JWT_SECRET=your-super-secret-jwt-key-here
@@ -47,7 +47,7 @@ This guide will help you deploy your fullstack authentication system to producti
      PORT=3000
      ```
 
-5. **Deploy!** Railway will automatically build and deploy your Rust application from the backend directory.
+5. **Deploy!** Railway will use Docker to build and deploy your Rust application.
 
 6. **Get your deployment URL** (e.g., `https://your-app.railway.app`)
 
@@ -199,6 +199,7 @@ Both Railway and Vercel will automatically redeploy when you push to your main b
    - Check environment variables
    - Verify port configuration
    - Check build logs
+   - Ensure Docker build completes successfully
 
 2. **Frontend can't connect to backend:**
    - Verify CORS settings
@@ -208,6 +209,10 @@ Both Railway and Vercel will automatically redeploy when you push to your main b
 3. **TypeScript client errors:**
    - Regenerate client after backend changes
    - Check OpenAPI spec is accessible
+
+4. **Rust version issues:**
+   - The Dockerfile uses Rust 1.75.0 which should be compatible
+   - If you encounter edition issues, check that all dependencies support the specified Rust edition
 
 ### Getting Help
 
