@@ -14,7 +14,9 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const api = new AuthApi(new Configuration({ basePath: 'http://localhost:3000' }));
+const api = new AuthApi(new Configuration({ 
+  basePath: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000' 
+}));
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);

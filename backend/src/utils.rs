@@ -23,10 +23,10 @@ pub fn load_env() -> Config {
 
     let jwt_secret = std::env::var("JWT_SECRET")
         .expect("JWT_SECRET must be set in .env file");
-    let jwt_expiration_secs = std::env::var("JWT_EXPIRATION")
-        .expect("JWT_EXPIRATION must be set in .env file")
+    let jwt_expiration_secs = std::env::var("JWT_EXPIRATION_SECS")
+        .expect("JWT_EXPIRATION_SECS must be set in .env file")
         .parse::<u32>()
-        .expect("JWT_EXPIRATION must be a valid u32");
+        .expect("JWT_EXPIRATION_SECS must be a valid u32");
 
     Config {
         jwt_salt,
