@@ -21,8 +21,12 @@ pub struct ProtectedApi;
 #[utoipa::path(
     get,
     path = "/admin/dashboard",
+    security(
+        ("bearer_auth" = [])
+    ),
     responses(
         (status = 200, description = "Admin dashboard with user stats", body = UserResponse),
+        (status = 401, description = "Unauthorized - Bearer token required"),
         (status = 403, description = "Forbidden - Admin access required")
     )
 )]
@@ -38,16 +42,14 @@ pub async fn admin_dashboard(
     }
 
     let users_guard = users.lock().unwrap();
-    let list: Vec<_> = users_guard
+    let list: Vec<UserResponse> = users_guard
         .iter()
-        .map(|u| {
-            json!({
-                "id": u.id,
-                "email": u.email,
-                "first_name": u.first_name,
-                "last_name": u.last_name,
-                "role": format!("{:?}", u.role),
-            })
+        .map(|u| UserResponse {
+            id: u.id,
+            email: u.email.clone(),
+            first_name: u.first_name.clone(),
+            last_name: u.last_name.clone(),
+            role: u.role.clone(),
         })
         .collect();
 
@@ -56,15 +58,20 @@ pub async fn admin_dashboard(
         "users": list,
     });
 
-    Ok((StatusCode::OK, Json(payload)))
+    Ok((StatusCode::OK, Json(payload)).into_response())
 }
 
 #[utoipa::path(
     post,
     path = "/admin/register",
+    security(
+        ("bearer_auth" = [])
+    ),
     request_body = RegisterRequest,
     responses(
         (status = 201, description = "Admin user created", body = UserResponse),
+        (status = 400, description = "Bad request - Validation error"),
+        (status = 401, description = "Unauthorized - Invalid or missing token"),
         (status = 403, description = "Forbidden - Admin access required"),
         (status = 409, description = "Conflict - Email already registered"),
         (status = 500, description = "Internal Server Error - Hash failure")
@@ -79,6 +86,19 @@ pub async fn register_admin(
 ) -> impl IntoResponse {
     if claims.role != Role::Admin {
         return Err((StatusCode::FORBIDDEN, Json(json!({ "error": "Admin access required" }))));
+    }
+
+    // Validate input
+    if payload.email.is_empty() || payload.first_name.is_empty() || payload.last_name.is_empty() {
+        return Err((StatusCode::BAD_REQUEST, Json(json!({ "error": "All fields are required" }))));
+    }
+
+    if payload.password != payload.confirm_password {
+        return Err((StatusCode::BAD_REQUEST, Json(json!({ "error": "Passwords do not match" }))));
+    }
+
+    if payload.password.len() < 6 {
+        return Err((StatusCode::BAD_REQUEST, Json(json!({ "error": "Password must be at least 6 characters" }))));
     }
 
     let mut users_guard = users.lock().unwrap();
@@ -99,13 +119,13 @@ pub async fn register_admin(
     };
     users_guard.push(new_admin.clone());
 
-    let response = json!({
-        "id": new_admin.id,
-        "email": new_admin.email,
-        "first_name": new_admin.first_name,
-        "last_name": new_admin.last_name,
-        "role": format!("{:?}", new_admin.role),
-    });
+    let response = UserResponse {
+        id: new_admin.id,
+        email: new_admin.email,
+        first_name: new_admin.first_name,
+        last_name: new_admin.last_name,
+        role: new_admin.role,
+    };
 
     Ok((StatusCode::CREATED, Json(response)))
 }
@@ -113,25 +133,37 @@ pub async fn register_admin(
 #[utoipa::path(
     get,
     path = "/user/profile",
+    security(
+        ("bearer_auth" = [])
+    ),
     responses(
         (status = 200, description = "User profile info", body = UserResponse),
-        (status = 403, description = "Forbidden - User access required"),
+        (status = 400, description = "Bad request - Invalid user ID"),
+        (status = 401, description = "Unauthorized - Invalid or missing token"),
+        (status = 403, description = "Forbidden - Authentication required"),
         (status = 404, description = "Not Found - User not found")
     )
 )]
 
 /// GET /user/profile
-/// Returns the authenticated user's profile info — only accessible by Users.
+/// Returns the authenticated user's profile info — accessible by both Users and Admins.
 pub async fn user_profile(
     Extension(claims): Extension<Arc<Claims>>,
     Extension(users): Extension<Arc<Mutex<Vec<User>>>>,
 ) -> impl IntoResponse {
-    if claims.role != Role::User {
-        return Err((StatusCode::FORBIDDEN, Json(json!({ "error": "User access required" }))));
+    // Allow both User and Admin roles to access their profile
+    if claims.role != Role::User && claims.role != Role::Admin {
+        return Err((StatusCode::FORBIDDEN, Json(json!({ "error": "Authentication required" }))));
     }
 
     let users_guard = users.lock().unwrap();
-    match users_guard.iter().find(|u| u.email == claims.sub) {
+    let user_id = claims.sub.parse::<i32>().unwrap_or(0);
+    
+    if user_id == 0 {
+        return Err((StatusCode::BAD_REQUEST, Json(json!({ "error": "Invalid user ID" }))));
+    }
+    
+    match users_guard.iter().find(|u| u.id == user_id) {
         Some(u) => {
             let profile = UserResponse {
                 id: u.id,

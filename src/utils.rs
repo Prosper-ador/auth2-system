@@ -1,4 +1,5 @@
 use dotenvy::dotenv;
+use sha2::{Sha256, Digest};
 
 #[derive(Debug, Clone)]
 pub struct Config {
@@ -11,10 +12,14 @@ pub fn load_env() -> Config {
     dotenv().ok();
 
     let jwt_salt_str = std::env::var("JWT_SALT")
-        .expect("JWT_SALT must be set in .env file and be exactly 16 characters");
-    assert_eq!(jwt_salt_str.len(), 16, "JWT_SALT must be exactly 16 characters long");
+        .expect("JWT_SALT must be set in .env file");
+    
+    // Hash the salt string to get exactly 16 bytes
+    let mut hasher = Sha256::new();
+    hasher.update(jwt_salt_str.as_bytes());
+    let hash_result = hasher.finalize();
     let mut jwt_salt = [0u8; 16];
-    jwt_salt.copy_from_slice(jwt_salt_str.as_bytes());
+    jwt_salt.copy_from_slice(&hash_result[..16]);
 
     let jwt_secret = std::env::var("JWT_SECRET")
         .expect("JWT_SECRET must be set in .env file");

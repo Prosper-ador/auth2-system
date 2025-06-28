@@ -60,7 +60,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **register**
-> RegisterResponse register(registerRequest)
+> LoginResponse register(registerRequest)
 
 
 ### Example
@@ -91,7 +91,7 @@ const { status, data } = await apiInstance.register(
 
 ### Return type
 
-**RegisterResponse**
+**LoginResponse**
 
 ### Authorization
 

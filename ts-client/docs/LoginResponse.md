@@ -5,8 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**access_token** | **string** |  | [default to undefined]
 **message** | **string** |  | [default to undefined]
-**token** | **string** |  | [default to undefined]
+**token_type** | **string** |  | [default to undefined]
 
 ## Example
 
@@ -14,8 +15,9 @@ Name | Type | Description | Notes
 import { LoginResponse } from './api';
 
 const instance: LoginResponse = {
+    access_token,
     message,
-    token,
+    token_type,
 };
 ```
 
