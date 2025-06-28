@@ -1,0 +1,10 @@
+frontend/
+ts-client/
+.git/
+.gitignore
+README.md
+DEPLOYMENT.md
+dev.sh
+generate-client.sh
+deploy-production.sh
+*.log 

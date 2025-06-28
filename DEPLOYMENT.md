@@ -38,7 +38,7 @@ This guide will help you deploy your fullstack authentication system to producti
 3. **Select your repository**
 
 4. **Configure the deployment:**
-   - **Root Directory:** `backend`
+   - **Root Directory:** Leave as root (the configuration files will handle the backend build)
    - **Environment Variables:**
      ```
      JWT_SECRET=your-super-secret-jwt-key-here
@@ -47,7 +47,7 @@ This guide will help you deploy your fullstack authentication system to producti
      PORT=3000
      ```
 
-5. **Deploy!** Railway will automatically build and deploy your Rust application.
+5. **Deploy!** Railway will automatically build and deploy your Rust application from the backend directory.
 
 6. **Get your deployment URL** (e.g., `https://your-app.railway.app`)
 

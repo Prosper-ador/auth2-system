@@ -1,0 +1,8 @@
+[phases.setup]
+nixPkgs = ["rustc", "cargo", "pkg-config", "openssl", "musl", "bash"]
+
+[phases.install]
+cmds = ["chmod +x build.sh && ./build.sh"]
+
+[start]
+cmd = "cd backend && ./auth_api" 
