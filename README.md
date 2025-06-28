@@ -1,151 +1,163 @@
-# Auth API
+# Fullstack Authentication System
 
-A simple, secure authentication API built with [Axum](https://github.com/tokio-rs/axum) and [Rust](https://www.rust-lang.org/).  
-This project demonstrates user registration and login with JWT-based authentication, password hashing, and OpenAPI documentation via [utoipa](https://github.com/juhaku/utoipa).
+A complete authentication and authorization system with a Rust/Axum backend and React/TypeScript frontend.
 
----
+## 🏗️ Project Structure
 
-## Features
-
-- **User Registration**: Register new users with hashed passwords.
-- **User Login**: Authenticate users and issue JWT tokens.
-- **JWT Authentication**: Secure protected routes using middleware.
-- **OpenAPI Docs**: Auto-generated API documentation with utoipa.
-- **In-memory User Store**: Simple storage for demonstration (swap for a database in production).
-- **Password Hashing**: Secure password storage using bcrypt.
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- [Rust](https://www.rust-lang.org/tools/install) (stable)
-- [Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html)
-- [Git](https://git-scm.com/)
-
-### Clone the Repository
-
-```sh
-git clone https://github.com/your-username/auth_api.git
-cd auth_api
+```
+auth_api/
+├── backend/           # Rust/Axum API server
+│   ├── src/          # Rust source code
+│   ├── Cargo.toml    # Rust dependencies
+│   ├── Dockerfile    # Docker configuration
+│   ├── docker-compose.yml
+│   └── README.md     # Backend documentation
+├── frontend/         # React/TypeScript client
+│   ├── src/          # React source code
+│   ├── package.json  # Node.js dependencies
+│   └── README.md     # Frontend documentation
+├── ts-client/        # Generated TypeScript API client
+└── README.md         # This file
 ```
 
-### Set Environment Variables
+## 🚀 Quick Start
 
-Set the JWT secret key (required for signing tokens):
+### Backend Setup
 
-```sh
-export JWT_SECRET="your_super_secret_key"
-```
+1. **Navigate to backend directory:**
+   ```bash
+   cd backend
+   ```
 
-### Build and Run
+2. **Set up environment:**
+   ```bash
+   cp env.example .env
+   # Edit .env with your JWT secrets
+   ```
 
-```sh
+3. **Run with Docker (recommended):**
+   ```bash
+   ./deploy.sh
+   ```
+
+4. **Or run locally:**
+   ```bash
+   cargo run
+   ```
+
+The backend will be available at `http://localhost:3000`
+
+### Frontend Setup
+
+1. **Navigate to frontend directory:**
+   ```bash
+   cd frontend
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Start development server:**
+   ```bash
+   npm run dev
+   ```
+
+The frontend will be available at `http://localhost:5173`
+
+## 🔧 Features
+
+### Backend (Rust/Axum)
+- 🔐 JWT-based authentication
+- 👥 Role-based access control (Admin/User)
+- 📝 OpenAPI/Swagger documentation
+- 🔒 Password hashing with bcrypt
+- 🌐 CORS support
+- 📊 Structured logging
+- 🐳 Docker deployment ready
+
+### Frontend (React/TypeScript)
+- 🎨 Modern UI with Tailwind CSS
+- 🔄 Type-safe API client
+- 🛡️ Protected routes
+- 📱 Responsive design
+- 🔔 Toast notifications
+- 🎯 Form validation
+
+## 📚 API Documentation
+
+Once the backend is running, access the API documentation:
+
+- **Swagger UI**: http://localhost:3000/swagger-ui
+- **OpenAPI Spec**: http://localhost:3000/api-docs/openapi.json
+
+## 🔐 Authentication Flow
+
+1. **Registration**: Users can register with email, password, and personal info
+2. **Login**: Users authenticate with email/password and receive JWT token
+3. **Protected Routes**: Frontend uses JWT token for authenticated requests
+4. **Role-based Access**: Different endpoints require different user roles
+
+## 🛠️ Development
+
+### Backend Development
+```bash
+cd backend
 cargo run
 ```
 
-The API will start (by default) on `http://localhost:3000` or your configured port.
-
----
-
-## API Endpoints
-
-### Register
-
-- **POST** `/register`
-- **Request Body**:
-    ```json
-    {
-      "email": "user@example.com",
-      "first_name": "John",
-      "last_name": "Doe",
-      "password": "yourpassword",
-      "confirm_password": "yourpassword"
-    }
-    ```
-- **Response**:
-    - `201 Created`  
-      ```json
-      {
-        "message": "User registered successfully",
-        "token": "<jwt_token>"
-      }
-      ```
-    - `400 Bad Request`  
-      ```json
-      { "error": "User already exists" }
-      ```
-
-### Login
-
-- **POST** `/login`
-- **Request Body**:
-    ```json
-    {
-      "email": "user@example.com",
-      "password": "yourpassword"
-    }
-    ```
-- **Response**:
-    - `200 OK`  
-      ```json
-      {
-        "message": "Login successful",
-        "token": "<jwt_token>"
-      }
-      ```
-    - `401 Unauthorized`  
-      ```json
-      { "error": "Invalid credentials" }
-      ```
-
-### Protected Routes
-
-To access protected endpoints, include the JWT token in the `Authorization` header:
-
-```
-Authorization: Bearer <jwt_token>
+### Frontend Development
+```bash
+cd frontend
+npm run dev
 ```
 
----
+### Regenerate TypeScript Client
+```bash
+cd backend
+cargo run
+# In another terminal:
+cd ts-client
+npm run generate
+```
 
-## API Documentation
+## 🚀 Deployment
 
-OpenAPI docs are generated with utoipa.  
-You can expose and view the Swagger UI by adding a route for it in your Axum app (see utoipa documentation for integration).
+### Backend Deployment
+The backend is containerized and ready for deployment:
 
----
+```bash
+cd backend
+./deploy.sh
+```
 
-## Security Notes
+### Frontend Deployment
+Build the frontend for production:
 
-- **Passwords** are hashed using bcrypt before storage.
-- **JWT tokens** are signed with your `JWT_SECRET` environment variable.
-- **User data** is stored in-memory for demonstration.  
-  **For production, use a persistent database.**
+```bash
+cd frontend
+npm run build
+```
 
----
+## 📝 Environment Variables
 
-## Development
+### Backend (.env)
+```bash
+JWT_SECRET=your-super-secret-jwt-key
+JWT_SALT=your-super-secret-salt
+JWT_EXPIRATION_SECS=86400
+```
 
-- Format code: `cargo fmt`
-- Run tests: `cargo test`
-- Lint: `cargo clippy`
+## 🔒 Security Features
 
----
+- JWT tokens with expiration
+- Password hashing with bcrypt
+- Role-based access control
+- CORS configuration
+- Input validation
+- Secure headers
 
-## License
+## 📄 License
 
-This project is licensed under the MIT License.
-
----
-
-## Contributing
-
-Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
-
----
-
-## Contact
-
-For questions or support, please open an issue or contact
+MIT License

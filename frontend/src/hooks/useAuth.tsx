@@ -64,8 +64,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     try {
       const response = await api.login(credentials);
-      localStorage.setItem(TOKEN_KEY, response.data.token);
-      setUser(decodeUserFromToken(response.data.token));
+      localStorage.setItem(TOKEN_KEY, response.data.access_token);
+      setUser(decodeUserFromToken(response.data.access_token));
       toast({
         title: "Welcome back!",
         description: "You have been successfully logged in."
@@ -89,8 +89,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     try {
       const response = await api.register(userData);
-      localStorage.setItem(TOKEN_KEY, response.data.token);
-      setUser(decodeUserFromToken(response.data.token));
+      localStorage.setItem(TOKEN_KEY, response.data.access_token);
+      setUser(decodeUserFromToken(response.data.access_token));
       toast({
         title: "Account Created",
         description: "Your account has been created successfully!"

@@ -1,20 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
-import { AuthApi, Configuration } from '../../../ts-client/api';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Lock, Sparkles } from "lucide-react";
+import { Mail, Lock, LogIn, Sparkles } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-
-const api = new AuthApi(new Configuration({ basePath: 'http://localhost:3000' }));
+import { LoginRequest } from '../../../ts-client/api';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -24,10 +22,19 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await login({ email, password });
-      navigate('/profile');
+      const credentials: LoginRequest = {
+        email,
+        password,
+      };
+      
+      await login(credentials);
+      // Navigation is handled by the useAuth hook
     } catch (err: any) {
-      toast({ title: "Login failed", description: err?.response?.data?.error || err?.response?.data?.message || 'Invalid credentials', variant: "destructive" });
+      toast({ 
+        title: "Login failed", 
+        description: err?.response?.data?.error || 'Login failed', 
+        variant: "destructive" 
+      });
     } finally {
       setLoading(false);
     }

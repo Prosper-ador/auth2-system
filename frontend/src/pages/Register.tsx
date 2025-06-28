@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
-import { AuthApi, Configuration } from '../../../ts-client/api';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -8,8 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Lock, User, Sparkles } from "lucide-react";
-
-const api = new AuthApi(new Configuration({ basePath: 'http://localhost:3000' }));
+import { useAuth } from "@/hooks/useAuth";
+import { RegisterRequest } from '../../../ts-client/api';
 
 const Register = () => {
   const [firstName, setFirstName] = useState("");
@@ -20,24 +19,38 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { register } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (password !== confirmPassword) {
+      toast({ 
+        title: "Passwords don't match", 
+        description: "Please make sure your passwords match", 
+        variant: "destructive" 
+      });
+      return;
+    }
+
     setLoading(true);
     try {
-      const { data } = await api.register({
+      const userData: RegisterRequest = {
         first_name: firstName,
         last_name: lastName,
         email,
         password,
         confirm_password: confirmPassword,
-      } as any);
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('token_expiry', (Date.now() + 10 * 60 * 1000).toString());
-      toast({ title: "Registration successful!", description: "You can now log in." });
-      navigate("/login");
+      };
+      
+      await register(userData);
+      // Navigation is handled by the useAuth hook
     } catch (err: any) {
-      toast({ title: "Registration failed", description: err?.response?.data?.error || 'Registration failed', variant: "destructive" });
+      toast({ 
+        title: "Registration failed", 
+        description: err?.response?.data?.error || 'Registration failed', 
+        variant: "destructive" 
+      });
     } finally {
       setLoading(false);
     }

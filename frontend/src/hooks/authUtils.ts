@@ -21,17 +21,16 @@ export const isTokenExpired = (token: string): boolean => {
   }
 };
 
-export function decodeUserFromToken(token: string) {
+export function decodeUserFromToken(token: string): User | null {
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
     return {
-      id: "", // id is not included in the JWT, so we return an empty string
+      id: parseInt(payload.sub) || 0, // Convert JWT subject (user ID) to number
       email: payload.email || "",
       first_name: payload.first_name || "",
       last_name: payload.last_name || "",
-      role: payload.role || "",
+      role: payload.role || "User",
       password: "", // password is not included in the JWT, so we return an empty string
-      // id and password are NOT in the JWT, so don't include them
     };
   } catch {
     return null;

@@ -1,53 +1,59 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
-import { ProtectedApi, Configuration } from '../../../ts-client/api';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { User as UserIcon, Mail, ShieldCheck, LogOut, Clock } from "lucide-react";
 import { Label } from '@/components/ui/label';
-
-const api = new ProtectedApi(new Configuration({ basePath: 'http://localhost:3000' }));
+import { useAuth } from '@/hooks/useAuth';
 
 const Profile = () => {
-  const [user, setUser] = useState<any>(null);
-  const [error, setError] = useState('');
+  const { user, logout, isLoading } = useAuth();
   const navigate = useNavigate();
   const [sessionProgress, setSessionProgress] = useState(100);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
+    if (!isLoading && !user) {
       navigate('/login');
-      return;
     }
-    api.adminRoute({ headers: { Authorization: `Bearer ${token}` } })
-      .then(({ data }) => setUser(data))
-      .catch(() => {
-        setError('Failed to load profile.');
-        localStorage.removeItem('token');
-        navigate('/login');
-      });
-  }, [navigate]);
+  }, [user, isLoading, navigate]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const tokenExpiry = localStorage.getItem('token_expiry');
-      if (tokenExpiry) {
-        const now = Date.now();
-        const expiry = parseInt(tokenExpiry);
-        const remaining = Math.max(0, expiry - now);
-        const total = 10 * 60 * 1000; // 10 minutes in ms
-        const progress = (remaining / total) * 100;
-        setSessionProgress(progress);
+      const token = localStorage.getItem('auth_token');
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          const currentTime = Date.now() / 1000;
+          const remaining = Math.max(0, payload.exp - currentTime);
+          const total = 24 * 60 * 60; // 24 hours in seconds (JWT expiry)
+          const progress = (remaining / total) * 100;
+          setSessionProgress(progress);
+        } catch {
+          setSessionProgress(0);
+        }
       }
     }, 1000);
     return () => clearInterval(interval);
   }, []);
 
-  if (error) return <div className="flex items-center justify-center min-h-screen text-red-500">{error}</div>;
-  if (!user) return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
+        <div className="text-center space-y-4">
+          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center animate-pulse">
+            <div className="w-8 h-8 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <p className="text-gray-600 font-medium">Loading your profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // Will redirect to login
+  }
 
   const statusColor = sessionProgress > 50 ? "bg-emerald-500" : sessionProgress > 20 ? "bg-yellow-500" : "bg-red-500";
   const statusText = sessionProgress > 50 ? "Active" : sessionProgress > 20 ? "Warning" : "Expiring";
@@ -103,9 +109,8 @@ const Profile = () => {
             <Button
               className="w-full mt-4 py-2 font-semibold text-white bg-gradient-to-r from-pink-500 to-red-500 hover:from-red-500 hover:to-pink-500 transition-all duration-200 shadow-md flex items-center justify-center gap-2"
               onClick={() => {
-                localStorage.removeItem('token');
-                localStorage.removeItem('token_expiry');
-                navigate('/login');
+                localStorage.removeItem('auth_token');
+                logout();
               }}
               aria-label="Sign out securely"
             >

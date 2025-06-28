@@ -1,0 +1,12 @@
+/home/nyengka-prosper/projects/fullstack-projects/auth_api/target/debug/deps/libutoipa_swagger_ui-ff7f549e097da7d6.rmeta: /home/nyengka-prosper/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/utoipa-swagger-ui-9.0.2/src/lib.rs /home/nyengka-prosper/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/utoipa-swagger-ui-9.0.2/src/actix.rs /home/nyengka-prosper/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/utoipa-swagger-ui-9.0.2/src/axum.rs /home/nyengka-prosper/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/utoipa-swagger-ui-9.0.2/src/oauth.rs /home/nyengka-prosper/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/utoipa-swagger-ui-9.0.2/src/rocket.rs /home/nyengka-prosper/projects/fullstack-projects/auth_api/target/debug/build/utoipa-swagger-ui-b6e217bc8665379d/out/embed.rs
+
+/home/nyengka-prosper/projects/fullstack-projects/auth_api/target/debug/deps/utoipa_swagger_ui-ff7f549e097da7d6.d: /home/nyengka-prosper/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/utoipa-swagger-ui-9.0.2/src/lib.rs /home/nyengka-prosper/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/utoipa-swagger-ui-9.0.2/src/actix.rs /home/nyengka-prosper/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/utoipa-swagger-ui-9.0.2/src/axum.rs /home/nyengka-prosper/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/utoipa-swagger-ui-9.0.2/src/oauth.rs /home/nyengka-prosper/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/utoipa-swagger-ui-9.0.2/src/rocket.rs /home/nyengka-prosper/projects/fullstack-projects/auth_api/target/debug/build/utoipa-swagger-ui-b6e217bc8665379d/out/embed.rs
+
+/home/nyengka-prosper/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/utoipa-swagger-ui-9.0.2/src/lib.rs:
+/home/nyengka-prosper/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/utoipa-swagger-ui-9.0.2/src/actix.rs:
+/home/nyengka-prosper/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/utoipa-swagger-ui-9.0.2/src/axum.rs:
+/home/nyengka-prosper/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/utoipa-swagger-ui-9.0.2/src/oauth.rs:
+/home/nyengka-prosper/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/utoipa-swagger-ui-9.0.2/src/rocket.rs:
+/home/nyengka-prosper/projects/fullstack-projects/auth_api/target/debug/build/utoipa-swagger-ui-b6e217bc8665379d/out/embed.rs:
+
+# env-dep:OUT_DIR=/home/nyengka-prosper/projects/fullstack-projects/auth_api/target/debug/build/utoipa-swagger-ui-b6e217bc8665379d/out
