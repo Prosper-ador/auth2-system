@@ -1,5 +1,5 @@
 # Multi-stage build for Rust application
-FROM rust:1.75-alpine as builder
+FROM rust:latest-alpine as builder
 
 # Install build dependencies
 RUN apk add --no-cache musl-dev

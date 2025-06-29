@@ -8,7 +8,7 @@ echo "🔨 Building backend for Railway..."
 
 # Ensure we have the correct Rust version
 echo "🦀 Setting up Rust toolchain..."
-rustup default 1.75.0
+rustup default stable
 rustup show
 
 # Navigate to backend directory
