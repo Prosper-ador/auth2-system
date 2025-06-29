@@ -15,7 +15,7 @@ COPY Cargo.toml Cargo.lock* ./
 RUN mkdir src && echo "fn main() {}" > src/main.rs
 
 # Build dependencies (this layer will be cached)
-RUN cargo build --release
+RUN cargo build
 
 # Remove dummy main.rs and copy actual source code
 RUN rm src/main.rs
