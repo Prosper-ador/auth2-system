@@ -1,5 +1,5 @@
 # Multi-stage build for Rust application
-FROM rust:latest-alpine as builder
+FROM rust:1.78-alpine as builder
 
 # Install build dependencies
 RUN apk add --no-cache musl-dev
@@ -53,4 +53,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
 
 # Run the application
-CMD ["./auth_api"] 
+CMD ["./auth_api"]
