@@ -12,7 +12,7 @@ cargo:rerun-if-env-changed=CARGO_CFG_TARGET_OS
 cargo:rerun-if-env-changed=CARGO_CFG_TARGET_ENV
 cargo:rerun-if-env-changed=CARGO_CFG_TARGET_ENDIAN
 OPT_LEVEL = Some(0)
-OUT_DIR = Some(/home/nyengka-prosper/projects/fullstack-projects/auth_api/target/debug/build/ring-609c371204a4dc31/out)
+OUT_DIR = Some(/home/nyengka-prosper/projects/fullstack-projects/auth_api/backend/target/debug/build/ring-609c371204a4dc31/out)
 TARGET = Some(x86_64-unknown-linux-gnu)
 HOST = Some(x86_64-unknown-linux-gnu)
 cargo:rerun-if-env-changed=CC_x86_64-unknown-linux-gnu
@@ -40,7 +40,7 @@ CFLAGS_x86_64-unknown-linux-gnu = None
 CARGO_ENCODED_RUSTFLAGS = Some()
 cargo:rustc-link-lib=static=ring_core_0_17_14_
 OPT_LEVEL = Some(0)
-OUT_DIR = Some(/home/nyengka-prosper/projects/fullstack-projects/auth_api/target/debug/build/ring-609c371204a4dc31/out)
+OUT_DIR = Some(/home/nyengka-prosper/projects/fullstack-projects/auth_api/backend/target/debug/build/ring-609c371204a4dc31/out)
 TARGET = Some(x86_64-unknown-linux-gnu)
 HOST = Some(x86_64-unknown-linux-gnu)
 cargo:rerun-if-env-changed=CC_x86_64-unknown-linux-gnu
@@ -67,7 +67,7 @@ cargo:rerun-if-env-changed=CFLAGS_x86_64-unknown-linux-gnu
 CFLAGS_x86_64-unknown-linux-gnu = None
 CARGO_ENCODED_RUSTFLAGS = Some()
 cargo:rustc-link-lib=static=ring_core_0_17_14__test
-cargo:rustc-link-search=native=/home/nyengka-prosper/projects/fullstack-projects/auth_api/target/debug/build/ring-609c371204a4dc31/out
+cargo:rustc-link-search=native=/home/nyengka-prosper/projects/fullstack-projects/auth_api/backend/target/debug/build/ring-609c371204a4dc31/out
 cargo:rerun-if-changed=crypto/cpu_intel.c
 cargo:rerun-if-changed=crypto/fipsmodule/ec/ecp_nistz384.h
 cargo:rerun-if-changed=crypto/fipsmodule/ec/gfp_p384.c

@@ -140,8 +140,8 @@ async fn main() {
     let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
     
     tracing::info!("Server listening on {}", addr);
-    tracing::info!("Swagger UI available at http://{}swagger-ui", addr);
-    tracing::info!("OpenAPI spec available at http://{}api-docs/openapi.json", addr);
+    tracing::info!("Swagger UI available at http://{}/swagger-ui", addr);
+    tracing::info!("OpenAPI spec available at http://{}/api-docs/openapi.json", addr);
     
     axum::serve(listener, app).await.unwrap();
 }
