@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Lock, LogIn, Sparkles } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { LoginRequest } from '../../../ts-client/api';
+import { LoginRequest } from '../../ts-client/api';
 
 const Login = () => {
   const [email, setEmail] = useState("");

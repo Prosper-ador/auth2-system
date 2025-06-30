@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
-import { RegisterRequest, UserResponse } from '../../../ts-client/api';
+import { RegisterRequest, UserResponse } from '../../ts-client/api';
 import { ShieldCheck, UserPlus, Users, Loader2 } from 'lucide-react';
 
 const AdminDashboard = () => {

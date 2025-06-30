@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { AuthApi, Configuration, User, LoginRequest, RegisterRequest } from '../../../ts-client/api';
+import { AuthApi, Configuration, User, LoginRequest, RegisterRequest } from '../../ts-client/api';
 import { getToken, clearAuthData, isTokenExpired, decodeUserFromToken, TOKEN_KEY } from './authUtils';
 import { useNavigate } from "react-router-dom";
 

@@ -6,7 +6,7 @@ import type {
   ToastProps,
 } from "@/components/ui/toast"
 
-import { AuthApi, Configuration } from '../../../ts-client/api'; // adjust path as needed
+import { AuthApi, Configuration } from '../../ts-client/api'; // adjust path as needed
 
 const TOAST_LIMIT = 1
 const TOAST_REMOVE_DELAY = 1000000

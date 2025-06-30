@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Lock, User, Sparkles } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { RegisterRequest } from '../../../ts-client/api';
+import { RegisterRequest } from '../../ts-client/api';
 
 const Register = () => {
   const [firstName, setFirstName] = useState("");
