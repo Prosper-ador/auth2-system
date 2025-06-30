@@ -1,13 +1,3 @@
-Ran tool
-Ran tool
-Read file: frontend/package.json
-Read file: backend/Cargo.toml
-Read file: backend/README.md
-Read file: frontend/README.md
-Here is a **professional, unified README** for your fullstack authentication/authorization project, covering both backend (Rust/Axum) and frontend (React/TypeScript/Tailwind):
-
----
-
 # Fullstack Auth API
 
 A modern, secure authentication and authorization system with a Rust/Axum backend and a React/TypeScript frontend. Features JWT-based auth, role-based access control, beautiful UI, and OpenAPI integration.
