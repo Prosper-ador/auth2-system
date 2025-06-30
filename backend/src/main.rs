@@ -80,8 +80,16 @@ async fn main() {
     tracing::info!("Starting Auth API server...");
 
     // Load configuration
-    let config = load_env();
-    tracing::info!("Configuration loaded successfully");
+    let config = match std::panic::catch_unwind(|| load_env()) {
+        Ok(config) => {
+            tracing::info!("Configuration loaded successfully");
+            config
+        }
+        Err(e) => {
+            tracing::error!("Failed to load configuration: {:?}", e);
+            std::process::exit(1);
+        }
+    };
 
     // Initialize application state
     let state = AppState {
@@ -137,11 +145,26 @@ async fn main() {
     let port = std::env::var("PORT").unwrap_or_else(|_| "3000".to_string());
     let host = std::env::var("HOST").unwrap_or_else(|_| "0.0.0.0".to_string());
     let addr = format!("{}:{}", host, port);
-    let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
+    
+    tracing::info!("Attempting to bind to {}", addr);
+    
+    let listener = match tokio::net::TcpListener::bind(&addr).await {
+        Ok(listener) => {
+            tracing::info!("Successfully bound to {}", addr);
+            listener
+        }
+        Err(e) => {
+            tracing::error!("Failed to bind to {}: {}", addr, e);
+            std::process::exit(1);
+        }
+    };
     
     tracing::info!("Server listening on {}", addr);
     tracing::info!("Swagger UI available at http://{}/swagger-ui", addr);
     tracing::info!("OpenAPI spec available at http://{}/api-docs/openapi.json", addr);
     
-    axum::serve(listener, app).await.unwrap();
+    if let Err(e) = axum::serve(listener, app).await {
+        tracing::error!("Server error: {}", e);
+        std::process::exit(1);
+    }
 }

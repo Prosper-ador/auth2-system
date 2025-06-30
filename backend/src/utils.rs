@@ -12,7 +12,7 @@ pub fn load_env() -> Config {
     dotenv().ok();
 
     let jwt_salt_str = std::env::var("JWT_SALT")
-        .expect("JWT_SALT must be set in .env file");
+        .unwrap_or_else(|_| "your-super-secret-salt-here-change-in-production".to_string());
     
     // Hash the salt string to get exactly 16 bytes
     let mut hasher = Sha256::new();
@@ -22,11 +22,11 @@ pub fn load_env() -> Config {
     jwt_salt.copy_from_slice(&hash_result[..16]);
 
     let jwt_secret = std::env::var("JWT_SECRET")
-        .expect("JWT_SECRET must be set in .env file");
+        .unwrap_or_else(|_| "your-super-secret-jwt-key-here-change-in-production".to_string());
     let jwt_expiration_secs = std::env::var("JWT_EXPIRATION_SECS")
-        .expect("JWT_EXPIRATION_SECS must be set in .env file")
+        .unwrap_or_else(|_| "86400".to_string())
         .parse::<u32>()
-        .expect("JWT_EXPIRATION_SECS must be a valid u32");
+        .unwrap_or(86400);
 
     Config {
         jwt_salt,

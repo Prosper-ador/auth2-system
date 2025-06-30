@@ -1,57 +1,55 @@
-# Multi-stage build for Rust application
-FROM rust:1.78-alpine as builder
-
+# ---------- Stage 1: Build ----------
+FROM rust:1.78-slim AS builder
 
 # Install build dependencies
-RUN apk add --no-cache musl-dev
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    libssl-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
 
-# Copy Cargo files
-COPY Cargo.toml Cargo.lock* ./
-
-# Create a dummy main.rs to build dependencies
+# Cache dependencies
+COPY Cargo.toml Cargo.lock ./
+COPY rust-toolchain.toml ./
 RUN mkdir src && echo "fn main() {}" > src/main.rs
+RUN cargo build --release && rm -r src
 
-# Build dependencies (this layer will be cached)
-RUN cargo build
-
-# Remove dummy main.rs and copy actual source code
-RUN rm src/main.rs
+# Copy actual source code
 COPY src ./src
 
-# Build the application
+# Build optimized release binary
 RUN cargo build --release
 
-# Runtime stage
-FROM alpine:latest
+# Strip debug symbols to reduce binary size
+RUN strip target/release/auth_api
+
+# ---------- Stage 2: Runtime ----------
+FROM ubuntu:22.04
 
 # Install runtime dependencies
-RUN apk add --no-cache ca-certificates
-
-# Create non-root user
-RUN addgroup -g 1001 -S appgroup && \
-    adduser -u 1001 -S appuser -G appgroup
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
 
-# Copy binary from builder stage
-COPY --from=builder /app/target/release/auth_api /app/auth_api
+# Copy binary from builder
+COPY --from=builder /app/target/release/auth_api ./auth_api
 
-# Change ownership to non-root user
-RUN chown appuser:appgroup /app/auth_api
-
-# Switch to non-root user
-USER appuser
+# Make binary executable
+RUN chmod +x ./auth_api
 
 # Expose port
 EXPOSE 3000
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost:3000/health || exit 1
 
 # Run the application
 CMD ["./auth_api"]
