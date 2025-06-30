@@ -90,6 +90,12 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+
+  html.dark {
+    background-color: #18181b;
+    color: #f3f4f6;
+    transition: background 0.3s, color 0.3s;
+  }
 }
 
 @layer base {

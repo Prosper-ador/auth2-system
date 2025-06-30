@@ -638,6 +638,9 @@ export class ProtectedApi extends BaseAPI {
         return ProtectedApiFp(this.configuration).userProfile(options).then((request) => request(this.axios, this.basePath));
     }
 }
-export { Configuration }
+
+export { Configuration } from './configuration';
+
+
 
 

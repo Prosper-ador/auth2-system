@@ -59,52 +59,52 @@ const Profile = () => {
   const statusText = sessionProgress > 50 ? "Active" : sessionProgress > 20 ? "Warning" : "Expiring";
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#f6f3ff] py-8">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#f6f3ff] dark:bg-[#18181b] py-8 transition-colors duration-300">
       <div className="flex flex-col items-center mb-8">
-        <div className="flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-purple-400 to-blue-400 mb-4">
+        <div className="flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-purple-400 to-blue-400 dark:from-purple-700 dark:to-blue-800 mb-4 animate-float">
           <ShieldCheck className="h-9 w-9 text-white" />
         </div>
-        <h1 className="text-3xl font-extrabold text-purple-700 mb-2">Welcome, {user.first_name || user.email}!</h1>
-        <p className="text-gray-500 text-lg">Manage your account and session</p>
+        <h1 className="text-3xl font-extrabold text-purple-700 dark:text-purple-300 mb-2 animate-fade-in-up">Welcome, {user.first_name || user.email}!</h1>
+        <p className="text-gray-500 dark:text-gray-300 text-lg animate-fade-in-up">Manage your account and session</p>
       </div>
       {/* Session Status Card */}
-      <div className="w-full max-w-xl mb-6">
-        <Card className="rounded-xl shadow border-0">
+      <div className="w-full max-w-xl mb-6 animate-fade-in-up">
+        <Card className="rounded-xl shadow border-0 bg-white dark:bg-gray-900 transition-colors duration-300">
           <CardHeader className="flex flex-row items-center gap-2 pb-2">
             <Clock className="h-5 w-5 text-purple-500" />
-            <CardTitle className="text-lg font-bold text-purple-700">Session Status</CardTitle>
+            <CardTitle className="text-lg font-bold text-purple-700 dark:text-purple-300">Session Status</CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <p className="text-gray-600 text-sm mb-2">Your session will expire automatically for security</p>
+            <p className="text-gray-600 dark:text-gray-300 text-sm mb-2">Your session will expire automatically for security</p>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700">Session Progress</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-200">Session Progress</span>
               <span className={`text-xs font-semibold px-2 py-1 rounded-full text-white ${statusColor}`}>{statusText}</span>
             </div>
-            <Progress value={sessionProgress} className="h-2 bg-gray-200" />
-            <p className="text-xs text-gray-600 mt-2">Session expires in approximately {Math.ceil((sessionProgress / 100) * 10)} minutes</p>
+            <Progress value={sessionProgress} className="h-2 bg-gray-200 dark:bg-gray-800" />
+            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">Session expires in approximately {Math.ceil((sessionProgress / 100) * 10)} minutes</p>
           </CardContent>
         </Card>
       </div>
       {/* Profile Info Card */}
-      <div className="w-full max-w-xl mb-6">
-        <Card className="rounded-xl shadow border-0">
+      <div className="w-full max-w-xl mb-6 animate-fade-in-up">
+        <Card className="rounded-xl shadow border-0 bg-white dark:bg-gray-900 transition-colors duration-300">
           <CardHeader className="flex flex-row items-center gap-2 pb-2">
             <UserIcon className="h-5 w-5 text-purple-500" />
-            <CardTitle className="text-lg font-bold text-purple-700">Profile Information</CardTitle>
+            <CardTitle className="text-lg font-bold text-purple-700 dark:text-purple-300">Profile Information</CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <p className="text-gray-600 text-sm mb-4">Your account details and information</p>
+            <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">Your account details and information</p>
             <div className="mb-4">
-              <Label className="text-xs font-medium text-gray-700 flex items-center gap-2"><UserIcon className="h-4 w-4 text-purple-400" />Full Name</Label>
-              <input type="text" value={user.first_name + ' ' + user.last_name} readOnly className="w-full mt-1 p-2 rounded bg-purple-50 border border-purple-100 text-gray-800 font-medium outline-none" />
+              <Label className="text-xs font-medium text-gray-700 dark:text-gray-200 flex items-center gap-2"><UserIcon className="h-4 w-4 text-purple-400" />Full Name</Label>
+              <input type="text" value={user.first_name + ' ' + user.last_name} readOnly className="w-full mt-1 p-2 rounded bg-purple-50 dark:bg-gray-800 border border-purple-100 dark:border-gray-700 text-gray-800 dark:text-gray-100 font-medium outline-none" />
             </div>
             <div className="mb-4">
-              <Label className="text-xs font-medium text-gray-700 flex items-center gap-2"><Mail className="h-4 w-4 text-purple-400" />Email Address</Label>
-              <input type="text" value={user.email} readOnly className="w-full mt-1 p-2 rounded bg-purple-50 border border-purple-100 text-gray-800 font-medium outline-none" />
+              <Label className="text-xs font-medium text-gray-700 dark:text-gray-200 flex items-center gap-2"><Mail className="h-4 w-4 text-purple-400" />Email Address</Label>
+              <input type="text" value={user.email} readOnly className="w-full mt-1 p-2 rounded bg-purple-50 dark:bg-gray-800 border border-purple-100 dark:border-gray-700 text-gray-800 dark:text-gray-100 font-medium outline-none" />
             </div>
             <div className="mb-4">
-              <Label className="text-xs font-medium text-gray-700 flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-purple-400" />User ID</Label>
-              <input type="text" value={user.id} readOnly className="w-full mt-1 p-2 rounded bg-purple-50 border border-purple-100 text-gray-800 font-medium outline-none" />
+              <Label className="text-xs font-medium text-gray-700 dark:text-gray-200 flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-purple-400" />User ID</Label>
+              <input type="text" value={user.id} readOnly className="w-full mt-1 p-2 rounded bg-purple-50 dark:bg-gray-800 border border-purple-100 dark:border-gray-700 text-gray-800 dark:text-gray-100 font-medium outline-none" />
             </div>
             <Button
               className="w-full mt-4 py-2 font-semibold text-white bg-gradient-to-r from-pink-500 to-red-500 hover:from-red-500 hover:to-pink-500 transition-all duration-200 shadow-md flex items-center justify-center gap-2"
@@ -127,6 +127,8 @@ const Profile = () => {
         .animate-blob2 { animation: blob2 10s ease-in-out infinite; }
         @keyframes fadeInUp { 0% { opacity: 0; transform: translateY(40px) scale(0.98);} 100% { opacity: 1; transform: translateY(0) scale(1);} }
         .animate-fade-in-up { animation: fadeInUp 0.8s cubic-bezier(.4,0,.2,1) both; }
+        @keyframes float { 0%, 100% { transform: translateY(0);} 50% { transform: translateY(-10px);} }
+        .animate-float { animation: float 2.5s ease-in-out infinite; }
       `}</style>
     </div>
   );
