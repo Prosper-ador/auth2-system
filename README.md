@@ -1,163 +1,166 @@
-# Fullstack Authentication System
+Ran tool
+Ran tool
+Read file: frontend/package.json
+Read file: backend/Cargo.toml
+Read file: backend/README.md
+Read file: frontend/README.md
+Here is a **professional, unified README** for your fullstack authentication/authorization project, covering both backend (Rust/Axum) and frontend (React/TypeScript/Tailwind):
 
-A complete authentication and authorization system with a Rust/Axum backend and React/TypeScript frontend.
+---
 
-## 🏗️ Project Structure
+# Fullstack Auth API
+
+A modern, secure authentication and authorization system with a Rust/Axum backend and a React/TypeScript frontend. Features JWT-based auth, role-based access control, beautiful UI, and OpenAPI integration.
+
+---
+
+## Features
+
+- 🔐 JWT-based authentication (login, registration)
+- 👥 Role-based access control (User/Admin)
+- 📝 OpenAPI/Swagger documentation (auto-generated client)
+- 💻 Modern React + TypeScript frontend (Vite, Tailwind, shadcn-ui)
+- 🌗 Dark mode, animated UI, responsive design
+- 🛡️ Secure password hashing (bcrypt)
+- 🌐 CORS support, structured logging
+
+---
+
+## Project Structure
 
 ```
 auth_api/
-├── backend/           # Rust/Axum API server
-│   ├── src/          # Rust source code
-│   ├── Cargo.toml    # Rust dependencies
-│   ├── Dockerfile    # Docker configuration
-│   ├── docker-compose.yml
-│   └── README.md     # Backend documentation
-├── frontend/         # React/TypeScript client
-│   ├── src/          # React source code
-│   ├── package.json  # Node.js dependencies
-│   └── README.md     # Frontend documentation
-├── ts-client/        # Generated TypeScript API client
-└── README.md         # This file
+├── backend/      # Rust/Axum API server
+├── frontend/     # React/TypeScript client
+├── ts-client/    # Auto-generated TypeScript API client (from OpenAPI)
 ```
 
-## 🚀 Quick Start
+---
 
-### Backend Setup
+## Getting Started
 
-1. **Navigate to backend directory:**
-   ```bash
-   cd backend
-   ```
+### Prerequisites
 
-2. **Set up environment:**
-   ```bash
-   cp env.example .env
-   # Edit .env with your JWT secrets
-   ```
+- **Backend:** Rust 1.70+ ([Install Rust](https://rustup.rs/))
+- **Frontend:** Node.js 18+ and npm or yarn
 
-3. **Run with Docker (recommended):**
-   ```bash
-   ./deploy.sh
-   ```
+---
 
-4. **Or run locally:**
-   ```bash
-   cargo run
-   ```
-
-The backend will be available at `http://localhost:3000`
-
-### Frontend Setup
-
-1. **Navigate to frontend directory:**
-   ```bash
-   cd frontend
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Start development server:**
-   ```bash
-   npm run dev
-   ```
-
-The frontend will be available at `http://localhost:5173`
-
-## 🔧 Features
-
-### Backend (Rust/Axum)
-- 🔐 JWT-based authentication
-- 👥 Role-based access control (Admin/User)
-- 📝 OpenAPI/Swagger documentation
-- 🔒 Password hashing with bcrypt
-- 🌐 CORS support
-- 📊 Structured logging
-- 🐳 Docker deployment ready
-
-### Frontend (React/TypeScript)
-- 🎨 Modern UI with Tailwind CSS
-- 🔄 Type-safe API client
-- 🛡️ Protected routes
-- 📱 Responsive design
-- 🔔 Toast notifications
-- 🎯 Form validation
-
-## 📚 API Documentation
-
-Once the backend is running, access the API documentation:
-
-- **Swagger UI**: http://localhost:3000/swagger-ui
-- **OpenAPI Spec**: http://localhost:3000/api-docs/openapi.json
-
-## 🔐 Authentication Flow
-
-1. **Registration**: Users can register with email, password, and personal info
-2. **Login**: Users authenticate with email/password and receive JWT token
-3. **Protected Routes**: Frontend uses JWT token for authenticated requests
-4. **Role-based Access**: Different endpoints require different user roles
-
-## 🛠️ Development
-
-### Backend Development
-```bash
-cd backend
-cargo run
-```
-
-### Frontend Development
-```bash
-cd frontend
-npm run dev
-```
-
-### Regenerate TypeScript Client
-```bash
-cd backend
-cargo run
-# In another terminal:
-cd ts-client
-npm run generate
-```
-
-## 🚀 Deployment
-
-### Backend Deployment
-The backend is containerized and ready for deployment:
+### 1. Backend Setup
 
 ```bash
 cd backend
-./deploy.sh
+cargo build
 ```
 
-### Frontend Deployment
-Build the frontend for production:
+Create a `.env` file in `backend/`:
 
-```bash
-cd frontend
-npm run build
-```
-
-## 📝 Environment Variables
-
-### Backend (.env)
-```bash
-JWT_SECRET=your-super-secret-jwt-key
-JWT_SALT=your-super-secret-salt
+```env
+JWT_SECRET=your-super-secret-jwt-key-here
+JWT_SALT=your-super-secret-salt-here
 JWT_EXPIRATION_SECS=86400
 ```
 
-## 🔒 Security Features
+Start the backend server:
 
-- JWT tokens with expiration
-- Password hashing with bcrypt
-- Role-based access control
-- CORS configuration
-- Input validation
-- Secure headers
+```bash
+cargo run
+```
 
-## 📄 License
+- API runs at: `http://localhost:3000`
+- Swagger UI: `http://localhost:3000/swagger-ui`
+- OpenAPI Spec: `http://localhost:3000/api-docs/openapi.json`
+
+---
+
+### 2. Frontend Setup
+
+```bash
+cd frontend
+npm install   # or yarn install
+npm run dev   # or yarn dev
+```
+
+- App runs at: `http://localhost:5173` (default Vite port)
+
+---
+
+### 3. API Client (TypeScript)
+
+The frontend uses an auto-generated TypeScript client (`ts-client/`) based on the backend OpenAPI spec.  
+If you update backend endpoints, regenerate the client:
+
+```bash
+./generate-client.sh
+```
+
+---
+
+## Usage
+
+- **Register** a new user or log in with:
+  - **Admin:** `admin@example.com` / `password`
+  - **User:** `user@example.com` / `password`
+- **Admin Dashboard:** Only visible to admin users after login.
+- **Profile:** View your user info and session status.
+- **Dark Mode:** Toggle from the navbar.
+
+---
+
+## API Endpoints
+
+- `POST /login` — User login
+- `POST /register` — User registration
+- `GET /user/profile` — Get user profile (auth required)
+- `GET /admin/dashboard` — Admin dashboard (admin only)
+- `POST /admin/register` — Register new admin (admin only)
+
+See [Swagger UI](http://localhost:3000/swagger-ui) for full docs.
+
+---
+
+## Environment Variables
+
+**Backend:**
+| Variable             | Description                        | Default   |
+|----------------------|------------------------------------|-----------|
+| `JWT_SECRET`         | Secret key for JWT signing         | Required  |
+| `JWT_SALT`           | Salt for password hashing          | Required  |
+| `JWT_EXPIRATION_SECS`| JWT token expiration (in seconds)  | 86400     |
+
+**Frontend:**
+| Variable             | Description                        | Default   |
+|----------------------|------------------------------------|-----------|
+| `VITE_API_BASE_URL`  | Backend API base URL               | http://localhost:3000 |
+
+---
+
+## Deployment
+
+- **Test locally** as above.
+- **Frontend:** Deploy to Vercel, Netlify, or your preferred static host.
+- **Backend:** Deploy to your server, Railway, or any platform supporting Rust.
+
+---
+
+## Security & Production
+
+- Use strong, unique secrets in production.
+- Enable HTTPS and proper CORS.
+- Add persistent database (current setup is in-memory for demo).
+- Monitor and log API activity.
+
+---
+
+## License
 
 MIT License
+
+---
+
+**Questions?**  
+Open an issue or contact the maintainer.
+
+---
+
+Let me know if you want this saved as your main `README.md` or want a split (backend/frontend) version!

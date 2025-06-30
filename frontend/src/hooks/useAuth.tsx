@@ -15,7 +15,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const api = new AuthApi(new Configuration({ 
-  basePath: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000' 
+  basePath: import.meta.env.VITE_API_BASE_URL || 'auth2-system-production.up.railway.app' 
 }));
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
