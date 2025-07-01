@@ -98,16 +98,16 @@ async fn main() {
             User {
                 id: 1,
                 email: "admin@example.com".to_string(),
-                first_name: "Admin".to_string(),
-                last_name: "User".to_string(),
+                first_name: "Nyengka".to_string(),
+                last_name: "Prosper".to_string(),
                 password: bcrypt::hash("password", bcrypt::DEFAULT_COST).unwrap(),
                 role: Role::Admin,
             },
             User {
                 id: 2,
                 email: "user@example.com".to_string(),
-                first_name: "John".to_string(),
-                last_name: "Doe".to_string(),
+                first_name: "King".to_string(),
+                last_name: "Joshua".to_string(),
                 password: bcrypt::hash("password", bcrypt::DEFAULT_COST).unwrap(),
                 role: Role::User,
             }
