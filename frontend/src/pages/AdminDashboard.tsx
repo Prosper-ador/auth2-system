@@ -28,7 +28,7 @@ const AdminDashboard = () => {
       setLoading(true);
       try {
         const token = localStorage.getItem('auth_token');
-        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'auth2-system-production.up.railway.app'}/admin/dashboard`, {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/admin/dashboard`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error('Failed to fetch users');
@@ -56,7 +56,7 @@ const AdminDashboard = () => {
     setRegistering(true);
     try {
       const token = localStorage.getItem('auth_token');
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'auth2-system-production.up.railway.app'}/admin/register`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/admin/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

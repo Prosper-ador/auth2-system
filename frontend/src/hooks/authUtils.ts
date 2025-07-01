@@ -1,4 +1,4 @@
-import { User } from '../../ts-client/api';
+import { User } from '../../../ts-client/api';
 
 export const TOKEN_KEY = 'auth_token';
 
